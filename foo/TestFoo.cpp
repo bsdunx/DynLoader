@@ -45,50 +45,7 @@
 #include <dlfcn.h>
 #endif
 
-#include "Resource.hpp"
-
 #include "../tests/UnitTest.hpp"
-
-#if PLATFORM_WIN32_VC || PLATFORM_WIN32_MINGW
-DWORD WINAPI MainThread(LPVOID)
-{
-	TestFooLib(1);
-
-	return 1;
-}
-#endif
-
-#if PLATFORM_WIN32_VC || PLATFORM_WIN32_MINGW
-DWORD WINAPI thr_func(LPVOID)
-#elif PLATFORM_POSIX
-extern "C" void * thr_func(void *)
-#endif
-{
-#if PLATFORM_WIN32_VC || PLATFORM_WIN32_MINGW
-	DWORD ret =
-#elif PLATFORM_POSIX
-	int ret =
-#endif
-		0;
-// POSIX workaround since std::cout is not cancel async safe
-#if PLATFORM_POSIX
-	pthread_setcancelstate(PTHREAD_CANCEL_DISABLE, NULL);
-#endif
-	std::cout << "Thr func" << std::endl;
-#if PLATFORM_POSIX
-	pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
-#endif
-
-	ret = 1;
-
-#if PLATFORM_WIN32_VC || PLATFORM_WIN32_MINGW
-	Sleep(10);
-	ExitThread(ret);
-#elif PLATFORM_POSIX
-	usleep(10000);
-	pthread_exit(&ret);
-#endif
-}
 
 int TestFoo(int TestTimes)
 {
@@ -175,7 +132,7 @@ int TestFooLib(int TestTimes)
 		}
 		catch(DynLoader::LoaderException & ex)
 		{
-			fprintf(stderr, "OK: LoaderException catched: %s\n", ex.what());
+			fprintf(stderr, "OK: LoaderException caught: %s\n", ex.what());
 			UNIT_TEST(false);
 		}
 		catch(...)

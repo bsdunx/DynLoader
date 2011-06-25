@@ -30,7 +30,6 @@
 #include <cstdio>
 
 #include "TestFoo.hpp"
-#include "Resource.hpp"
 
 int main(int argc, char ** argv)
 {
