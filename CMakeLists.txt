@@ -1,22 +1,22 @@
 # ################################################################################
 # Project name
 #
-PROJECT(PDL)
+PROJECT(LIBDYNLOADER)
 
 # ################################################################################
 # Project version
 #
-SET(PDL_VERSION_MAJOR 0)
-SET(PDL_VERSION_MINOR 3)
-SET(PDL_VERSION_PATCH 900)
+SET(LIBDYNLOADER_VERSION_MAJOR 0)
+SET(LIBDYNLOADER_VERSION_MINOR 1)
+SET(LIBDYNLOADER_VERSION_PATCH 0)
 
-SET(PDL_VERSION
-	"${PDL_VERSION_MAJOR}.${PDL_VERSION_MINOR}.${PDL_VERSION_PATCH}")
+SET(LIBDYNLOADER_VERSION
+	"${LIBDYNLOADER_VERSION_MAJOR}.${LIBDYNLOADER_VERSION_MINOR}.${LIBDYNLOADER_VERSION_PATCH}")
 
 # ################################################################################
 # CMake version check
 #
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6 FATAL_ERROR)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.8 FATAL_ERROR)
 
 # ################################################################################
 # Check Includes
@@ -65,9 +65,8 @@ ELSEIF(CMAKE_BUILD_ON_VISUAL_STUDIO MATCHES "1")
   SET(CMAKE_CXX_STANDARD_LIBRARIES "User32.lib")
 ENDIF()
 
-INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/common/include)
-INCLUDE_DIRECTORIES(libpdl/include)
+INCLUDE_DIRECTORIES(libdynloader/include)
 
-ADD_SUBDIRECTORY(libpdl)
+ADD_SUBDIRECTORY(libdynloader)
 ADD_SUBDIRECTORY(foo)
 

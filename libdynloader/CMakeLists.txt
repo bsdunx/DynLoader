@@ -1,49 +1,49 @@
 # ################################################################################
 # Project version
 #
-SET(PDL_VERSION_MAJOR 0)
-SET(PDL_VERSION_MINOR 3)
-SET(PDL_VERSION_PATCH 900)
+#SET(PDL_VERSION_MAJOR 0)
+#SET(PDL_VERSION_MINOR 3)
+#SET(PDL_VERSION_PATCH 900)
 
-SET(PDL_VERSION
-	"${PDL_VERSION_MAJOR}.${PDL_VERSION_MINOR}.${PDL_VERSION_PATCH}")
+#SET(PDL_VERSION
+#	"${PDL_VERSION_MAJOR}.${PDL_VERSION_MINOR}.${PDL_VERSION_PATCH}")
 
 # ################################################################################
 # Library source
 #
-FILE(GLOB PDL_SRCS                               src/*.cpp)
-FILE(GLOB PDL_INCS                               include/*.hpp
-                                                 include/*.h)
+FILE(GLOB LIBDYNLOADER_SRCS 				src/*.cpp)
+FILE(GLOB LIBDYNLOADER_INCS 				include/*.hpp
+							include/*.h)
 
-SOURCE_GROUP("PDL Sources" FILES ${PDL_SRCS})
-SOURCE_GROUP("PDL Headers" FILES ${PDL_INCS})
+SOURCE_GROUP("LibDynLoader Sources" FILES ${LIBDYNLOADER_SRCS})
+SOURCE_GROUP("LibDynLoader Headers" FILES ${LIBDYNLOADER_INCS})
 
 # ################################################################################
 # Library binary
 #
-ADD_LIBRARY(libpdl SHARED                        ${PDL_SRCS} ${PDL_INCS})
+ADD_LIBRARY(libdynloader SHARED                        ${LIBDYNLOADER_SRCS} ${LIBDYNLOADER_INCS})
 IF(CMAKE_SYSTEM_NAME MATCHES "Linux")
-  TARGET_LINK_LIBRARIES(libpdl c dl)
+  TARGET_LINK_LIBRARIES(libdynloader c dl)
 ENDIF()
 
-SET_TARGET_PROPERTIES(libpdl PROPERTIES          OUTPUT_NAME libpdl)
-SET_TARGET_PROPERTIES(libpdl PROPERTIES          PREFIX "" IMPORT_PREFIX "")
-SET_TARGET_PROPERTIES(libpdl PROPERTIES          LINKER_LANGUAGE CXX)
-SET_TARGET_PROPERTIES(libpdl PROPERTIES          DEFINE_SYMBOL PDL_EXPORT)
-SET_TARGET_PROPERTIES(libpdl PROPERTIES          COMPILE_FLAGS -DPDL_SHARED)
-SET_TARGET_PROPERTIES(libpdl PROPERTIES          VERSION ${PDL_VERSION}
-                                                 SOVERSION ${PDL_VERSION_MAJOR})
+SET_TARGET_PROPERTIES(libdynloader PROPERTIES          OUTPUT_NAME libpdl)
+SET_TARGET_PROPERTIES(libdynloader PROPERTIES          PREFIX "" IMPORT_PREFIX "")
+SET_TARGET_PROPERTIES(libdynloader PROPERTIES          LINKER_LANGUAGE CXX)
+SET_TARGET_PROPERTIES(libdynloader PROPERTIES          DEFINE_SYMBOL PDL_EXPORT)
+SET_TARGET_PROPERTIES(libdynloader PROPERTIES          COMPILE_FLAGS -DPDL_SHARED)
+SET_TARGET_PROPERTIES(libdynloader PROPERTIES          VERSION ${LIBDYNLOADER_VERSION}
+                                                 SOVERSION ${LIBDYNLOADER_VERSION_MAJOR})
 
-ADD_LIBRARY(libpdl-static STATIC                 ${PDL_SRCS} ${PDL_INCS})
+ADD_LIBRARY(libdynloader-static STATIC                 ${LIBDYNLOADER_SRCS} ${LIBDYNLOADER_INCS})
 IF(CMAKE_SYSTEM_NAME MATCHES "Linux")
-  TARGET_LINK_LIBRARIES(libpdl-static c dl)
+  TARGET_LINK_LIBRARIES(libdynloader-static c dl)
 ENDIF()
 
-SET_TARGET_PROPERTIES(libpdl-static PROPERTIES   OUTPUT_NAME libpdl-static)
-SET_TARGET_PROPERTIES(libpdl-static PROPERTIES   PREFIX "" IMPORT_PREFIX "")
-SET_TARGET_PROPERTIES(libpdl-static PROPERTIES   LINKER_LANGUAGE CXX )
-SET_TARGET_PROPERTIES(libpdl-static PROPERTIES   VERSION ${PDL_VERSION}
-                                                 SOVERSION ${PDL_VERSION_MAJOR})
+SET_TARGET_PROPERTIES(libdynloader-static PROPERTIES   OUTPUT_NAME libpdl-static)
+SET_TARGET_PROPERTIES(libdynloader-static PROPERTIES   PREFIX "" IMPORT_PREFIX "")
+SET_TARGET_PROPERTIES(libdynloader-static PROPERTIES   LINKER_LANGUAGE CXX )
+SET_TARGET_PROPERTIES(libdynloader-static PROPERTIES   VERSION ${LIBDYNLOADER_VERSION}
+                                                 SOVERSION ${LIBDYNLOADER_VERSION_MAJOR})
 
 # ################################################################################
 # Installation
@@ -53,11 +53,11 @@ INSTALL(FILES                                    include/platform.h
                                                  include/DynClass.hpp
                                                  include/DynLoader.hpp
                                                  include/LoaderException.hpp
-        DESTINATION                              include/pdl)
+        DESTINATION                              include/libdynloader)
 
 # Install binaries
-INSTALL(TARGETS                                  libpdl
-                                                 libpdl-static
+INSTALL(TARGETS                                  libdynloader
+                                                 libdynloader-static
         DESTINATION                              lib)
 
 # ################################################################################
@@ -80,7 +80,7 @@ SET_TARGET_PROPERTIES(libtest_module2 PROPERTIES OUTPUT_NAME libtest_module2)
 SET_TARGET_PROPERTIES(libtest_module2 PROPERTIES PREFIX "" IMPORT_PREFIX "")
 
 # Test LoaderException class
-ADD_EXECUTABLE(TestLoaderException               tests/TestLoaderException.cpp ${PDL_SRCS})
+ADD_EXECUTABLE(TestLoaderException               tests/TestLoaderException.cpp ${LIBDYNLOADER_SRCS})
 
 IF(CMAKE_SYSTEM_NAME MATCHES "Linux")
 TARGET_LINK_LIBRARIES(TestLoaderException      dl)
@@ -89,7 +89,7 @@ ENDIF()
 ADD_TEST(TestLoaderException                     ${EXECUTABLE_OUTPUT_PATH}/TestLoaderException)
 
 # Test DynLib class
-ADD_EXECUTABLE(TestDynLib                        tests/TestDynLib.cpp ${PDL_SRCS})
+ADD_EXECUTABLE(TestDynLib                        tests/TestDynLib.cpp ${LIBDYNLOADER_SRCS})
 IF(CMAKE_SYSTEM_NAME MATCHES "Linux")
 TARGET_LINK_LIBRARIES(TestDynLib               dl)
 ENDIF()
@@ -102,7 +102,7 @@ ELSE()
 ENDIF()
 
 # Test DynamicLibraryManager class
-ADD_EXECUTABLE(TestDynLibManager                 tests/TestDynLibManager.cpp ${PDL_SRCS})
+ADD_EXECUTABLE(TestDynLibManager                 tests/TestDynLibManager.cpp ${LIBDYNLOADER_SRCS})
 IF(CMAKE_SYSTEM_NAME MATCHES "Linux")
 TARGET_LINK_LIBRARIES(TestDynLibManager        dl)
 ENDIF()
@@ -118,7 +118,7 @@ ENDIF()
 
 # Test DynLoader class
 ADD_EXECUTABLE(TestDynLoader                     tests/TestDynLoader.cpp)
-TARGET_LINK_LIBRARIES(TestDynLoader              libpdl)
+TARGET_LINK_LIBRARIES(TestDynLoader              libdynloader)
 
 # DynLoader Tests
 IF(WIN32 AND NOT CYGWIN)
