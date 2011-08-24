@@ -91,7 +91,7 @@ extern "C" PDL_DECL_EXPORT DynLoader::DynClass * Create##className() \
 	{ \
 		;; \
 	} \
-	return 0; \
+	return nullptr; \
 }
 
 #endif // __DYNCLASS_HPP__

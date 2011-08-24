@@ -25,8 +25,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef __TEST_INTERFACE_HPP__
-#define __TEST_INTERFACE_HPP__
+#ifndef __TESTINTERFACE_HPP__
+#define __TESTINTERFACE_HPP__
 
 #include <DynClass.hpp>
 
@@ -50,5 +50,5 @@ public:
 
 };
 
-#endif // __TEST_INTERFACE_HPP__
+#endif // __TESTINTERFACE_HPP__
 

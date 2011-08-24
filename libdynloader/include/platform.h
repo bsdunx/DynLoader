@@ -65,7 +65,7 @@
 #    define PLATFORM_WIN32_VC 1
 #    define PLATFORM 1
 #    if defined(_DEBUG)
-#      pragma warning(disable : 4985) // Should be in cmake prolly
+#      pragma warning(disable : 4985) // This should probably be disabled at the cmake level
 #      define _CRTDBG_MAP_ALLOC
 #      define _CRTDBG_MAP_ALLOC_NEW
 #      include <stdlib.h>

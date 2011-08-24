@@ -35,7 +35,7 @@
  */
 void Test1::DoSomething() throw()
 {
-	fprintf(stderr, " Test1::DoSomething()\n");
+	fprintf(stderr, "Test1::DoSomething()\n");
 }
 
 /**

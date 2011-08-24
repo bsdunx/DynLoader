@@ -25,8 +25,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef __FOO_INTERFACE_HPP__
-#define __FOO_INTERFACE_HPP__
+#ifndef __FOOINTERFACE_HPP__
+#define __FOOINTERFACE_HPP__
 
 #include <DynClass.hpp>
 
@@ -67,5 +67,5 @@ public:
 	DECLARE_DYN_CLASS(IBar)
 };
 
-#endif // __FOO_INTERFACE_HPP__
+#endif // __FOOINTERFACE_HPP__
 

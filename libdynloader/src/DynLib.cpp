@@ -1,6 +1,6 @@
 /**
  * Copyright (c) 2007-2008, Igor Semenov
- * Copyright (c) 2010, Adam Gregoire
+ * Copyright (c) 2010-2011, Adam Gregoire
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -54,7 +54,7 @@ typedef DynClass * (*DynBuilder)();
 /**
  * @brief Constructor
  */
-DynLib::DynLib() : lib_(0), libName_(), instances_()
+DynLib::DynLib() : lib_(nullptr), libName_(), instances_()
 {
 	;;
 }
@@ -123,14 +123,14 @@ DynClass * DynLib::GetInstance(const PDL_CHAR * className)
 	auto symbol = GetSymbolByName(builderName.c_str());
 	if(!symbol)
 	{
-		instances_[className] = 0;
+		instances_[className] = nullptr;
 		throw LoaderException(pdl_string("Class `") + pdl_string(className) +
 		                      pdl_string("` not found in ") + libName_);
 	}
 
 	// POSIX guarantees that the size of a pointer to object is equal to 
 	// the size of a pointer to a function.
-	DynBuilder builder = 0;
+	DynBuilder builder = nullptr;
 	builder = (DynBuilder)symbol;
 	DynClass * instance = (*builder)();
 
@@ -169,7 +169,7 @@ pdl_string DynLib::GetLastError() const
 		const DWORD res =
 			::FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
 			                  NULL, ::GetLastError(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-	                          reinterpret_cast<LPSTR>(&lpMsgBuf), 0, NULL);
+	                          reinterpret_cast<LPSTR>(&lpMsgBuf), 0, nullptr);
 		pdl_string errorText;
 		if(res != 0)
 		{
@@ -196,7 +196,7 @@ bool DynLib::Close()
 	auto cend(instances_.cend());
 	for(auto i(instances_.cbegin()); i != cend; ++i)
 	{
-		(i->second)->Destroy();
+		i->second->Destroy();
 	}
 	instances_.clear();
 
@@ -209,7 +209,7 @@ bool DynLib::Close()
 #elif PLATFORM_POSIX
 				(::dlclose(lib_) == 0);
 #endif
-		lib_ = 0;
+		lib_ = nullptr;
 	}
 
 	libName_.clear();

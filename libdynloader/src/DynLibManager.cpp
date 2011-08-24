@@ -130,7 +130,9 @@ DynLib & DynLibManager::GetLibInstance(const PDL_CHAR * libName)
 	
 	if(!lib)
 	{
+#if PLATFORM_WIN32_VC || PLATFORM_WIN32_MINGW
 		VC_DBG_BREAK
+#endif
 		// Actually, this should never happen.
 		// If it has happened, this means serious memory damage
 		throw LoaderException(pdl_string("Internal error"));

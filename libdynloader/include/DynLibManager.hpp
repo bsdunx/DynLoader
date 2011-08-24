@@ -30,7 +30,7 @@
 
 #include <platform.h>
 #include <string>
-#include <map>
+#include <unordered_map>
 
 /**
  * @namespace PDL
@@ -84,7 +84,7 @@ private:
 
 private:
 	// Libraries map
-	typedef std::map<pdl_string, DynLib *> LibMap;
+	typedef std::unordered_map<pdl_string, DynLib *> LibMap;
 	LibMap libs_;
 
 }; // class DynLibManager

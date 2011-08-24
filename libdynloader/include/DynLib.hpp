@@ -31,7 +31,7 @@
 
 #include <platform.h>
 #include <string>
-#include <map>
+#include <unordered_map>
 
 #if PLATFORM_WIN32_VC || PLATFORM_WIN32_MINGW
 #include <windows.h>
@@ -127,7 +127,7 @@ private:
 	pdl_string libName_;
 
 	// Symbol map
-	typedef std::map<pdl_string, DynClass *> InstanceMap;
+	typedef std::unordered_map<pdl_string, DynClass *> InstanceMap;
 	InstanceMap instances_;
 
 }; // class DynLib
