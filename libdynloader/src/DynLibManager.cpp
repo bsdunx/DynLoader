@@ -69,15 +69,18 @@ DynLibManager::~DynLibManager() throw()
 void DynLibManager::Reset()
 {
 	// Free all libraries
-	const DynLibManager::LibMap::iterator cend(libs_.end());
-	for(auto i(libs_.begin()); i != cend; ++i)
+	auto cend(libs_.cend());
+	for(auto i(libs_.cbegin()); i != cend; ++i)
 	{
-		DynLib * lib = i->second;
+		if(!i->second)
+			throw LoaderException("Missing library pointer in map.");
 
-		assert(lib && lib->Opened());
-
-		lib->Close();
-		delete lib;
+		if(i->second->Opened())
+		{
+			if(!i->second->Close())
+				throw LoaderException(pdl_string("Unable to close `") + pdl_string(i->first));
+		}
+		delete i->second;
 	}
 
 	// Clear library map

@@ -25,8 +25,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef __DYNLIB_MANAGER_HPP__
-#define __DYNLIB_MANAGER_HPP__
+#ifndef __DYNLIBMANAGER_HPP__
+#define __DYNLIBMANAGER_HPP__
 
 #include <platform.h>
 #include <string>
@@ -91,5 +91,5 @@ private:
 
 } // namespace PDL
 
-#endif // __DYNLIB_MANAGER_HPP__
+#endif // __DYNLIBMANAGER_HPP__
 
