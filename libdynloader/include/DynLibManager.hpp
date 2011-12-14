@@ -1,5 +1,7 @@
 /**
  * Copyright (c) 2007-2008, Igor Semenov
+ * Copyright (c) 2010-2011, Adam Gregoire
+ *
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -89,7 +91,7 @@ private:
 
 }; // class DynLibManager
 
-} // namespace PDL
+} // namespace DynLoader
 
 #endif // __DYNLIBMANAGER_HPP__
 
