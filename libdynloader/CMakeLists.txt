@@ -60,15 +60,17 @@ INSTALL(TARGETS                                  libdynloader
                                                  libdynloader-static
         DESTINATION                              lib)
 
-# ################################################################################
+#
 # Test suite
 #
 
+#
 # Test libraries
 ADD_LIBRARY(libtest_module1 MODULE               tests/TestClass1.cpp
                                                  tests/TestClass1.hpp
                                                  tests/TestInterface.hpp)
 
+ADD_DEPENDENCIES(libtest_module1 libdynloader)
 SET_TARGET_PROPERTIES(libtest_module1 PROPERTIES OUTPUT_NAME libtest_module1)
 SET_TARGET_PROPERTIES(libtest_module1 PROPERTIES PREFIX "" IMPORT_PREFIX "")
 
@@ -76,11 +78,16 @@ ADD_LIBRARY(libtest_module2 MODULE               tests/TestClass2.cpp
                                                  tests/TestClass2.hpp
 						 tests/TestInterface.hpp)
 
+ADD_DEPENDENCIES(libtest_module2 libdynloader)
 SET_TARGET_PROPERTIES(libtest_module2 PROPERTIES OUTPUT_NAME libtest_module2)
 SET_TARGET_PROPERTIES(libtest_module2 PROPERTIES PREFIX "" IMPORT_PREFIX "")
 
+#
 # Test LoaderException class
+
 ADD_EXECUTABLE(TestLoaderException               tests/TestLoaderException.cpp ${LIBDYNLOADER_SRCS})
+
+ADD_DEPENDENCIES(TestLoaderException libdynloader)
 
 IF(CMAKE_SYSTEM_NAME MATCHES "Linux")
 TARGET_LINK_LIBRARIES(TestLoaderException      dl)
@@ -88,8 +95,13 @@ ENDIF()
 
 ADD_TEST(TestLoaderException                     ${EXECUTABLE_OUTPUT_PATH}/TestLoaderException)
 
+#
 # Test DynLib class
+
 ADD_EXECUTABLE(TestDynLib                        tests/TestDynLib.cpp ${LIBDYNLOADER_SRCS})
+
+ADD_DEPENDENCIES(TestDynLib libdynloader)
+
 IF(CMAKE_SYSTEM_NAME MATCHES "Linux")
 TARGET_LINK_LIBRARIES(TestDynLib               dl)
 ENDIF()
@@ -101,12 +113,17 @@ ELSE()
   ADD_TEST(TestDynLib                            ${EXECUTABLE_OUTPUT_PATH}/TestDynLib ./libtest_module1.so)
 ENDIF()
 
+#
 # Test DynamicLibraryManager class
 ADD_EXECUTABLE(TestDynLibManager                 tests/TestDynLibManager.cpp ${LIBDYNLOADER_SRCS})
+
+ADD_DEPENDENCIES(TestDynLibManager libdynloader)
+
 IF(CMAKE_SYSTEM_NAME MATCHES "Linux")
 TARGET_LINK_LIBRARIES(TestDynLibManager        dl)
 ENDIF()
 
+#
 # DynamicLibraryManager Tests
 IF(WIN32 AND NOT CYGWIN)
   ADD_TEST(TestDynLibManager
@@ -116,8 +133,12 @@ ELSE()
     ${EXECUTABLE_OUTPUT_PATH}/TestDynLibManager ./libtest_module1.so ./libtest_module2.so)
 ENDIF()
 
+#
 # Test DynLoader class
 ADD_EXECUTABLE(TestDynLoader                     tests/TestDynLoader.cpp)
+
+ADD_DEPENDENCIES(TestLoaderException libdynloader)
+
 TARGET_LINK_LIBRARIES(TestDynLoader              libdynloader)
 
 # DynLoader Tests
@@ -132,4 +153,3 @@ ELSE()
   ADD_TEST(TestDynLoader2                          
     ${EXECUTABLE_OUTPUT_PATH}/TestDynLoader ./libtest_module2.so Test3 Test4)
 ENDIF()
-

@@ -28,7 +28,7 @@ SET_TARGET_PROPERTIES(libfoo_module PROPERTIES   PREFIX "" IMPORT_PREFIX "")
 # TestFooMain
 ADD_EXECUTABLE(TestFooMain                       TestFooMain.cpp 
                                                  TestFoo.cpp)
-
+ADD_DEPENDENCIES(TestFooMain 					 libdynloader)
 TARGET_LINK_LIBRARIES(TestFooMain                libdynloader
 	${CMAKE_THREAD_LIBS_INIT})
 
@@ -37,14 +37,15 @@ IF(WIN32 AND NOT CYGWIN)
   ADD_EXECUTABLE(TestFooWin WIN32                TestFooWin.cpp
                                                  TestFoo.cpp)
 
+  ADD_DEPENDENCIES(TestFooWin 					 libdynloader)
   TARGET_LINK_LIBRARIES(TestFooWin               libdynloader Gdi32)
 ENDIF(WIN32 AND NOT CYGWIN)
 
 # TestFooLib
 IF(WIN32)
-  ADD_LIBRARY(TestFooLib SHARED			 TestFooLib.cpp
+  ADD_LIBRARY(TestFooLib SHARED			 		 TestFooLib.cpp
                                                  TestFoo.cpp)
-
+  ADD_DEPENDENCIES(TestFooLib 					 libdynloader)
   TARGET_LINK_LIBRARIES(TestFooLib               libdynloader)
 ENDIF(WIN32)
 
