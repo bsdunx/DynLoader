@@ -1,155 +1,94 @@
-# ################################################################################
-# Project version
-#
-#SET(PDL_VERSION_MAJOR 0)
-#SET(PDL_VERSION_MINOR 3)
-#SET(PDL_VERSION_PATCH 900)
+file(GLOB LIBDYNLOADER_SRCS src/*.cpp)
+file(GLOB LIBDYNLOADER_INCS include/*.hpp include/*.h)
 
-#SET(PDL_VERSION
-#	"${PDL_VERSION_MAJOR}.${PDL_VERSION_MINOR}.${PDL_VERSION_PATCH}")
+source_group("LibDynLoader Sources" FILES ${LIBDYNLOADER_SRCS})
+source_group("LibDynLoader Headers" FILES ${LIBDYNLOADER_INCS})
 
-# ################################################################################
-# Library source
-#
-FILE(GLOB LIBDYNLOADER_SRCS 				src/*.cpp)
-FILE(GLOB LIBDYNLOADER_INCS 				include/*.hpp
-							include/*.h)
+add_library(libdynloader SHARED ${LIBDYNLOADER_SRCS} ${LIBDYNLOADER_INCS})
+if(CMAKE_SYSTEM_NAME MATCHES "Linux")
+  target_link_libraries(libdynloader c dl)
+endif()
 
-SOURCE_GROUP("LibDynLoader Sources" FILES ${LIBDYNLOADER_SRCS})
-SOURCE_GROUP("LibDynLoader Headers" FILES ${LIBDYNLOADER_INCS})
+set_target_properties(libdynloader PROPERTIES LINKER_LANGUAGE CXX)
+set_target_properties(libdynloader PROPERTIES DEFINE_SYMBOL PDL_EXPORT)
+set_target_properties(libdynloader PROPERTIES COMPILE_FLAGS -DPDL_SHARED)
+set_target_properties(libdynloader PROPERTIES VERSION ${LIBDYNLOADER_VERSION}
+                                              SOVERSION ${LIBDYNLOADER_VERSION_MAJOR})
 
-# ################################################################################
-# Library binary
-#
-ADD_LIBRARY(libdynloader SHARED                        ${LIBDYNLOADER_SRCS} ${LIBDYNLOADER_INCS})
-IF(CMAKE_SYSTEM_NAME MATCHES "Linux")
-  TARGET_LINK_LIBRARIES(libdynloader c dl)
-ENDIF()
+add_library(libdynloader-static STATIC ${LIBDYNLOADER_SRCS} ${LIBDYNLOADER_INCS})
+if(CMAKE_SYSTEM_NAME MATCHES "Linux")
+  target_link_libraries(libdynloader-static c dl)
+endif()
 
-SET_TARGET_PROPERTIES(libdynloader PROPERTIES          OUTPUT_NAME libdynloader)
-SET_TARGET_PROPERTIES(libdynloader PROPERTIES          PREFIX "" IMPORT_PREFIX "")
-SET_TARGET_PROPERTIES(libdynloader PROPERTIES          LINKER_LANGUAGE CXX)
-SET_TARGET_PROPERTIES(libdynloader PROPERTIES          DEFINE_SYMBOL PDL_EXPORT)
-SET_TARGET_PROPERTIES(libdynloader PROPERTIES          COMPILE_FLAGS -DPDL_SHARED)
-SET_TARGET_PROPERTIES(libdynloader PROPERTIES          VERSION ${LIBDYNLOADER_VERSION}
+set_target_properties(libdynloader-static PROPERTIES LINKER_LANGUAGE CXX )
+set_target_properties(libdynloader-static PROPERTIES VERSION ${LIBDYNLOADER_VERSION}
                                                  SOVERSION ${LIBDYNLOADER_VERSION_MAJOR})
 
-ADD_LIBRARY(libdynloader-static STATIC                 ${LIBDYNLOADER_SRCS} ${LIBDYNLOADER_INCS})
-IF(CMAKE_SYSTEM_NAME MATCHES "Linux")
-  TARGET_LINK_LIBRARIES(libdynloader-static c dl)
-ENDIF()
+install(FILES 
+    include/platform.h include/DynClass.hpp include/DynLoader.hpp include/LoaderException.hpp
+    DESTINATION
+	include/libdynloader)
 
-SET_TARGET_PROPERTIES(libdynloader-static PROPERTIES   OUTPUT_NAME libdynloader-static)
-SET_TARGET_PROPERTIES(libdynloader-static PROPERTIES   PREFIX "" IMPORT_PREFIX "")
-SET_TARGET_PROPERTIES(libdynloader-static PROPERTIES   LINKER_LANGUAGE CXX )
-SET_TARGET_PROPERTIES(libdynloader-static PROPERTIES   VERSION ${LIBDYNLOADER_VERSION}
-                                                 SOVERSION ${LIBDYNLOADER_VERSION_MAJOR})
+install(TARGETS libdynloader libdynloader-static DESTINATION lib)
 
-# ################################################################################
-# Installation
+add_library(libtest_module1 MODULE tests/TestClass1.cpp tests/TestClass1.hpp tests/TestInterface.hpp)
+add_dependencies(libtest_module1 libdynloader)
 
-# Install headers
-INSTALL(FILES                                    include/platform.h
-                                                 include/DynClass.hpp
-                                                 include/DynLoader.hpp
-                                                 include/LoaderException.hpp
-        DESTINATION                              include/libdynloader)
 
-# Install binaries
-INSTALL(TARGETS                                  libdynloader
-                                                 libdynloader-static
-        DESTINATION                              lib)
+add_library(libtest_module2 MODULE tests/TestClass2.cpp tests/TestClass2.hpp tests/TestInterface.hpp)
+add_dependencies(libtest_module2 libdynloader)
 
-#
-# Test suite
-#
 
-#
-# Test libraries
-ADD_LIBRARY(libtest_module1 MODULE               tests/TestClass1.cpp
-                                                 tests/TestClass1.hpp
-                                                 tests/TestInterface.hpp)
+add_executable(TestLoaderException tests/TestLoaderException.cpp ${LIBDYNLOADER_SRCS})
+add_dependencies(TestLoaderException libdynloader)
 
-ADD_DEPENDENCIES(libtest_module1 libdynloader)
-SET_TARGET_PROPERTIES(libtest_module1 PROPERTIES OUTPUT_NAME libtest_module1)
-SET_TARGET_PROPERTIES(libtest_module1 PROPERTIES PREFIX "" IMPORT_PREFIX "")
+if(CMAKE_SYSTEM_NAME MATCHES "Linux")
+  target_link_libraries(TestLoaderException dl)
+endif()
 
-ADD_LIBRARY(libtest_module2 MODULE               tests/TestClass2.cpp
-                                                 tests/TestClass2.hpp
-						 tests/TestInterface.hpp)
+add_test(TestLoaderException ${EXECUTABLE_OUTPUT_PATH}/TestLoaderException)
 
-ADD_DEPENDENCIES(libtest_module2 libdynloader)
-SET_TARGET_PROPERTIES(libtest_module2 PROPERTIES OUTPUT_NAME libtest_module2)
-SET_TARGET_PROPERTIES(libtest_module2 PROPERTIES PREFIX "" IMPORT_PREFIX "")
 
-#
-# Test LoaderException class
+add_executable(TestDynLib tests/TestDynLib.cpp ${LIBDYNLOADER_SRCS})
+add_dependencies(TestDynLib libdynloader)
 
-ADD_EXECUTABLE(TestLoaderException               tests/TestLoaderException.cpp ${LIBDYNLOADER_SRCS})
+if(CMAKE_SYSTEM_NAME MATCHES "Linux")
+  target_link_libraries(TestDynLib dl)
+endif()
 
-ADD_DEPENDENCIES(TestLoaderException libdynloader)
+if(WIN32 AND NOT CYGWIN)
+  add_test(TestDynLib ${EXECUTABLE_OUTPUT_PATH}/TestDynLib libtest_module1.dll)
+else()
+  add_test(TestDynLib ${EXECUTABLE_OUTPUT_PATH}/TestDynLib ./libtest_module1.so)
+endif()
 
-IF(CMAKE_SYSTEM_NAME MATCHES "Linux")
-TARGET_LINK_LIBRARIES(TestLoaderException      dl)
-ENDIF()
+add_executable(TestDynLibManager tests/TestDynLibManager.cpp ${LIBDYNLOADER_SRCS})
+add_dependencies(TestDynLibManager libdynloader)
 
-ADD_TEST(TestLoaderException                     ${EXECUTABLE_OUTPUT_PATH}/TestLoaderException)
+if(CMAKE_SYSTEM_NAME MATCHES "Linux")
+  target_link_libraries(TestDynLibManager dl)
+endif()
 
-#
-# Test DynLib class
-
-ADD_EXECUTABLE(TestDynLib                        tests/TestDynLib.cpp ${LIBDYNLOADER_SRCS})
-
-ADD_DEPENDENCIES(TestDynLib libdynloader)
-
-IF(CMAKE_SYSTEM_NAME MATCHES "Linux")
-TARGET_LINK_LIBRARIES(TestDynLib               dl)
-ENDIF()
-
-# DynLib Tests
-IF(WIN32 AND NOT CYGWIN)
-  ADD_TEST(TestDynLib                            ${EXECUTABLE_OUTPUT_PATH}/TestDynLib libtest_module1.dll)
-ELSE()
-  ADD_TEST(TestDynLib                            ${EXECUTABLE_OUTPUT_PATH}/TestDynLib ./libtest_module1.so)
-ENDIF()
-
-#
-# Test DynamicLibraryManager class
-ADD_EXECUTABLE(TestDynLibManager                 tests/TestDynLibManager.cpp ${LIBDYNLOADER_SRCS})
-
-ADD_DEPENDENCIES(TestDynLibManager libdynloader)
-
-IF(CMAKE_SYSTEM_NAME MATCHES "Linux")
-TARGET_LINK_LIBRARIES(TestDynLibManager        dl)
-ENDIF()
-
-#
-# DynamicLibraryManager Tests
-IF(WIN32 AND NOT CYGWIN)
-  ADD_TEST(TestDynLibManager
+if(WIN32 AND NOT CYGWIN)
+  add_test(TestDynLibManager
     ${EXECUTABLE_OUTPUT_PATH}/TestDynLibManager libtest_module1.dll libtest_module2.dll)
-ELSE()
-  ADD_TEST(TestDynLibManager                       
+else()
+  add_test(TestDynLibManager                       
     ${EXECUTABLE_OUTPUT_PATH}/TestDynLibManager ./libtest_module1.so ./libtest_module2.so)
-ENDIF()
+endif()
 
-#
-# Test DynLoader class
-ADD_EXECUTABLE(TestDynLoader                     tests/TestDynLoader.cpp)
+add_executable(TestDynLoader tests/TestDynLoader.cpp)
+add_dependencies(TestLoaderException libdynloader)
+target_link_libraries(TestDynLoader libdynloader)
 
-ADD_DEPENDENCIES(TestLoaderException libdynloader)
-
-TARGET_LINK_LIBRARIES(TestDynLoader              libdynloader)
-
-# DynLoader Tests
-IF(WIN32 AND NOT CYGWIN)
-  ADD_TEST(TestDynLoader1                          
+if(WIN32 AND NOT CYGWIN)
+  add_test(TestDynLoader1                          
     ${EXECUTABLE_OUTPUT_PATH}/TestDynLoader libtest_module1.dll Test1 Test2)
-  ADD_TEST(TestDynLoader2                        
+  add_test(TestDynLoader2                        
     ${EXECUTABLE_OUTPUT_PATH}/TestDynLoader libtest_module2.dll Test3 Test4)
-ELSE()
-  ADD_TEST(TestDynLoader1                          
+else()
+  add_test(TestDynLoader1                          
     ${EXECUTABLE_OUTPUT_PATH}/TestDynLoader ./libtest_module1.so Test1 Test2)
-  ADD_TEST(TestDynLoader2                          
+  add_test(TestDynLoader2                          
     ${EXECUTABLE_OUTPUT_PATH}/TestDynLoader ./libtest_module2.so Test3 Test4)
-ENDIF()
+endif()

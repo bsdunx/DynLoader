@@ -1,72 +1,66 @@
-# ################################################################################
-# Project name
-#
-PROJECT(LIBDYNLOADER)
+cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 
-# ################################################################################
-# Project version
-#
-SET(LIBDYNLOADER_VERSION_MAJOR 0)
-SET(LIBDYNLOADER_VERSION_MINOR 1)
-SET(LIBDYNLOADER_VERSION_PATCH 0)
+if(COMMAND cmake_policy)
+  cmake_policy(SET CMP0002 NEW)
+  cmake_policy(SET CMP0003 NEW)
+  cmake_policy(SET CMP0004 NEW)
+  cmake_policy(SET CMP0005 NEW)
+  cmake_policy(SET CMP0008 NEW)
+  cmake_policy(SET CMP0010 NEW)
+  cmake_policy(SET CMP0012 NEW)
+  cmake_policy(SET CMP0013 NEW)
+  cmake_policy(SET CMP0014 NEW)
+  cmake_policy(SET CMP0015 NEW)
+  cmake_policy(SET CMP0016 NEW)
+endif()
 
-SET(LIBDYNLOADER_VERSION
+include(CheckIncludeFiles)
+include(CheckLibraryExists)
+include(CheckCXXSourceCompiles)
+
+project(LIBDYNLOADER)
+
+set(LIBDYNLOADER_VERSION_MAJOR 0)
+set(LIBDYNLOADER_VERSION_MINOR 1)
+set(LIBDYNLOADER_VERSION_PATCH 0)
+
+set(LIBDYNLOADER_VERSION
 	"${LIBDYNLOADER_VERSION_MAJOR}.${LIBDYNLOADER_VERSION_MINOR}.${LIBDYNLOADER_VERSION_PATCH}")
 
-# ################################################################################
-# CMake version check
-#
-CMAKE_MINIMUM_REQUIRED(VERSION 2.8 FATAL_ERROR)
+if(CMAKE_COMPILER_IS_GNUCXX MATCHES "1")
+  set(CMAKE_CXX_FLAGS "-std=gnu++11 -Wall -pedantic -Weffc++ -fno-rtti")
+  set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} -g -D_DEBUG -O")
+  set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -O2")
+  set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS} -g -O2")
+elseif(CMAKE_BUILD_ON_VISUAL_STUDIO MATCHES "1")
+  set(CMAKE_CXX_FLAGS "/EHsc /GR- /Wall /W4 /wd4668 /wd4820 /wd4548 /wd4710 /wd4571 /wd4127 /wd4100 /wd4512 /wd4706 /wd4242")
+  set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} /MDd -D_DEBUG /RTC1 /GS /Zi /Od")
+  set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} /MD -DNDEBUG /O2")
+  set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS} /MD -DNDEBUG /Zi /O2")
+  set(CMAKE_CXX_STANDARD_LIBRARIES "User32.lib")
+endif()
 
-# ################################################################################
-# Check Includes
-#
-INCLUDE(CheckIncludeFiles)
-INCLUDE(CheckLibraryExists)
-INCLUDE(CheckCXXSourceCompiles)
+find_package(Threads)
 
-# ################################################################################
-# Check libraries
-#
+if(CMAKE_SYSTEM_NAME MATCHES "Linux")
+  check_library_exists(dl dlopen "" HAVE_LIBDL)
+  if(NOT HAVE_LIBDL)
+    message(FATAL_ERROR "Cannot find libdl")
+  endif()
+endif(CMAKE_SYSTEM_NAME MATCHES "Linux")
 
-FIND_PACKAGE(Threads)
+if(WIN32)
+  if(MSVC)
+    set(CMAKE_BUILD_ON_VISUAL_STUDIO 1)
+  endif()
+endif()
 
-IF(CMAKE_SYSTEM_NAME MATCHES "Linux")
-  CHECK_LIBRARY_EXISTS(dl dlopen "" HAVE_LIBDL)
-  IF(NOT HAVE_LIBDL)
-    MESSAGE(FATAL_ERROR "Cannot find libdl")
-  ENDIF()
-ENDIF(CMAKE_SYSTEM_NAME MATCHES "Linux")
+set(CMAKE_BUILD_TYPE Debug)
 
-# ################################################################################
-# Compiler settings
-#
-# This all needs to be cleaned up.
-IF(WIN32)
-  IF(MSVC)
-    SET(CMAKE_BUILD_ON_VISUAL_STUDIO 1)
-  ENDIF()
-ENDIF()
+enable_testing()
 
-SET(CMAKE_BUILD_TYPE Debug)
+include_directories(libdynloader/include)
 
-ENABLE_TESTING()
-
-IF(CMAKE_COMPILER_IS_GNUCXX MATCHES "1")
-  SET(CMAKE_CXX_FLAGS "-Wall -pedantic -Weffc++ -fno-rtti -Wno-long-long")
-  SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} -g -D_DEBUG -O")
-  SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -O2 -funroll-loops")
-  SET(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS} -g -O2")
-ELSEIF(CMAKE_BUILD_ON_VISUAL_STUDIO MATCHES "1")
-  SET(CMAKE_CXX_FLAGS "/EHsc /GR- /fp:fast /Wall /W4 /wd4668 /wd4820 /wd4548 /wd4710 /wd4571 /wd4127 /wd4100 /wd4512 /wd4706 /wd4242")
-  SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} /MDd -D_DEBUG /RTC1 /GS /Zi /Od")
-  SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} /MD -DNDEBUG /O2")
-  SET(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS} /MD -DNDEBUG /Zi /O2")
-  SET(CMAKE_CXX_STANDARD_LIBRARIES "User32.lib")
-ENDIF()
-
-INCLUDE_DIRECTORIES(libdynloader/include)
-
-ADD_SUBDIRECTORY(libdynloader)
-ADD_SUBDIRECTORY(foo)
+add_subdirectory(libdynloader)
+add_subdirectory(foo)
 

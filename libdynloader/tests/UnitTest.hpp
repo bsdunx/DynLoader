@@ -41,13 +41,15 @@ namespace PDL
 	PDL::TestCount++; \
 	if(!(condition)) \
 	{ \
-		fprintf(stderr, "ERROR: Test #%d Condition " #condition " failed at %s:%d\n", PDL::TestCount, __FILE__, __LINE__); \
-		VC_DBG_BREAK \
+		fprintf(stderr, "ERROR: Test #%d Condition " #condition " failed at %s:%d\n", \
+				PDL::TestCount, __FILE__, __LINE__); \
 		return -1; \
 	} \
 	else \
 	{ \
-		fprintf(stderr, "OK: Test #%d Condition " #condition " is ok at %s:%d\n", PDL::TestCount, __FILE__, __LINE__); \
+		fprintf(stderr, "OK: Test #%d Condition " #condition " is ok at %s:%d\n", \
+				PDL::TestCount, __FILE__, __LINE__); \
+		return 0; \
 	} \
 }
 

@@ -41,7 +41,7 @@ int main(int argc, char ** argv)
 	_CrtSetReportFile(_CRT_WARN, _CRTDBG_FILE_STDOUT);
 #endif
 
-	TestFoo(1);
+	TestFoo();
 
 	return 1;
 }

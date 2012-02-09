@@ -32,12 +32,7 @@
 
 #include "platform.h"
 
-#if PLATFORM_WIN32_VC || PLATFORM_WIN32_MINGW
-extern "C" __declspec(dllexport) DWORD WINAPI MainThread(LPVOID Arg);
-extern "C" __declspec(dllexport) DWORD DllEntry(LPVOID Arg);
-#endif
-
-int TestFoo(int TestTimes);
-int TestFooLib(int TestTimes);
+int TestFoo(void);
+int TestFooLib(void);
 
 #endif // __TEST_FOO_HPP__

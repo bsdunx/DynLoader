@@ -32,7 +32,7 @@
 // @todo Push detection of platform and toolchain to cmake
 #undef PLATFORM
 
-#if defined(WIN32) || defined(_WIN32)
+#if defined(_WIN32)
 /**
  * @brief Windows platform
  */
@@ -97,7 +97,7 @@
 #    define PDL_DECL
 #  endif
 
-/// Char types
+// character types
 #  include <tchar.h>
 
 #  define PDL_CHAR char
@@ -105,20 +105,6 @@
 #  define PDL_TCHAR TCHAR
 
 #  define PDL_SYMBOL void *
-
-// hardcode for now on windows
-#  ifdef PDL_USE_THREADS
-#    if PDL_USE_THREADS == 0
-#      error "Non threaded builds are unsupported on Windows"
-#    endif
-#  endif
-
-#  define PDL_THREADED 1
-
-typedef CRITICAL_SECTION pdl_mutex;
-typedef HANDLE pdl_thread_handle;
-typedef LPTHREAD_START_ROUTINE pdl_thread_routine;
-typedef DWORD pdl_thread_status;
 
 #elif defined(unix) || defined(__unix__)
 /**
@@ -136,19 +122,6 @@ typedef DWORD pdl_thread_status;
 
 #  define PDL_SYMBOL void *
 
-#  ifdef PDL_USE_THREADS
-#    define PDL_THREADED 1
-#  else
-#    define PDL_THREADED 0
-#  endif
-
-#include <pthread.h>
-
-typedef pthread_mutex_t pdl_mutex;
-typedef pthread_t pdl_thread_handle;
-typedef void * (* pdl_thread_routine)(void *);
-typedef void * pdl_thread_status;
-
 #define INVALID_HANDLE_VALUE NULL // To keep things more consistent in init lists
 
 #endif
@@ -158,18 +131,6 @@ typedef void * pdl_thread_status;
  * @brief Unknown platform. Cannot build
  */
 #  error "Unknown platform detected."
-#endif
-
-#if defined(VC_DBG_BREAK)
-#  error "VC_DBG_BREAK is defined elsewhere."
-#endif
-#if defined(_DEBUG)
-#  if PLATFORM_WIN32_VC
-#    define VC_DBG_BREAK DebugBreak();
-#  endif
-#endif
-#if !defined(VC_DBG_BREAK)
-#  define VC_DBG_BREAK
 #endif
 
 #include <string>

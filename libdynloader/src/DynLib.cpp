@@ -193,10 +193,9 @@ pdl_string DynLib::GetLastError() const
  */
 bool DynLib::Close()
 {
-	auto cend(instances_.cend());
-	for(auto i(instances_.cbegin()); i != cend; ++i)
+	for(auto it(instances_.cbegin()), cend(instances_.cend()); it != cend; ++it)
 	{
-		i->second->Destroy();
+		it->second->Destroy();
 	}
 	instances_.clear();
 

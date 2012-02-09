@@ -52,7 +52,7 @@ int main(int argc, char ** argv)
 	}
 	catch(DynLoader::LoaderException & ex)
 	{
-		fprintf(stderr, "OK: LoaderException catched: %s\n", ex.what());
+		fprintf(stderr, "OK: LoaderException caught: %s\n", ex.what());
 		UNIT_TEST(true);
 	}
 	catch(...)
@@ -67,7 +67,7 @@ int main(int argc, char ** argv)
 	}
 	catch(DynLoader::LoaderException & ex)
 	{
-		fprintf(stderr, "OK: LoaderException catched: %s\n", ex.what());
+		fprintf(stderr, "OK: LoaderException caught: %s\n", ex.what());
 		UNIT_TEST(true);
 	}
 	catch(...)
@@ -83,7 +83,7 @@ int main(int argc, char ** argv)
 	}
 	catch(DynLoader::LoaderException & ex)
 	{
-		fprintf(stderr, "OK: LoaderException catched: %s\n", ex.what());
+		fprintf(stderr, "OK: LoaderException caught: %s\n", ex.what());
 		UNIT_TEST(false);
 	}
 	catch(...)

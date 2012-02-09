@@ -28,7 +28,7 @@
 #include <platform.h>
 
 #include "TestClass2.hpp"
-#include <stdio.h>
+#include <cstdio>
 
 /**
  * @brief Test method
