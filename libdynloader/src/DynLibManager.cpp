@@ -35,8 +35,7 @@
 #include <cassert>
 
 /**
- * @namespace PDL
- * @brief Portable Dynamic Loader
+ * @namespace DynLoader
  */
 namespace DynLoader
 {
@@ -71,16 +70,12 @@ DynLibManager::~DynLibManager() throw()
 void DynLibManager::Reset()
 {
 	// Free all libraries
-	auto cend(libs_.cend());
-	for(auto i(libs_.cbegin()); i != cend; ++i)
+	for(auto i(libs_.cbegin()), cend(libs_.cend()); i != cend; ++i)
 	{
-		if(!i->second)
-			throw LoaderException("Missing library pointer in map.");
-
 		if(i->second->Opened())
 		{
 			if(!i->second->Close())
-				throw LoaderException(pdl_string("Unable to close `") + pdl_string(i->first));
+				throw LoaderException("Unable to close `" + i->first);
 		}
 		delete i->second;
 	}
@@ -100,7 +95,7 @@ DynLib & DynLibManager::GetLib(const PDL_CHAR * libName)
 	auto &lib = GetLibInstance(libName);
 
 	if(!lib.Opened())
-		throw LoaderException("`" + pdl_string(libName) + pdl_string("` is not opened."));
+		throw LoaderException("`" + pdl_string(libName) + "` is not opened.");
 
 	return lib;
 }
@@ -113,7 +108,7 @@ DynLib & DynLibManager::GetLib(const PDL_CHAR * libName)
 DynLib & DynLibManager::GetLibInstance(const PDL_CHAR * libName)
 {
 	if(!libName)
-		throw LoaderException(pdl_string("Library name is 0"));
+		throw LoaderException("You must supply a library name");
 
 	DynLib * lib = nullptr;
 	auto const libInstance(libs_.find(libName));
@@ -126,9 +121,8 @@ DynLib & DynLibManager::GetLibInstance(const PDL_CHAR * libName)
 		if(lib && !lib->Open(libName, true))
 		{
 			delete lib;
-			throw LoaderException(pdl_string("Cannot load library `") +
-			                       pdl_string(libName) + pdl_string("`: ") +
-			                       lib->GetLastError());
+			throw LoaderException("Cannot load library `" + pdl_string(libName) + 
+					"`: " + lib->GetLastError());
 		}
 		libs_[libName] = lib;
 	}
@@ -137,7 +131,7 @@ DynLib & DynLibManager::GetLibInstance(const PDL_CHAR * libName)
 	{
 		// Actually, this should never happen.
 		// If it has happened, this means serious memory damage
-		throw LoaderException(pdl_string("Internal error"));
+		throw LoaderException("Internal error");
 	}
 
 	return *lib;

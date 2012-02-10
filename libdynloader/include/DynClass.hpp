@@ -31,8 +31,7 @@
 #include <platform.h>
 
 /**
- * @namespace PDL
- * @brief Portable Dynamic Loader
+ * @namespace DynLoader
  */
 namespace DynLoader
 {
@@ -54,7 +53,7 @@ public:
 	/**
 	 * @brief Destroy class instance
 	 */
-	void Destroy() throw() { delete this; }
+	void Destroy() const throw() { delete this; }
 
 protected:
 	/**
@@ -82,7 +81,7 @@ public: \
  * @param className - [in] name of the class
  */
 #define EXPORT_DYN_CLASS(className) \
-extern "C" PDL_DECL DynLoader::DynClass * Create##className() \
+extern "C" PDL_DECL DynLoader::DynClass * Create##className() throw() \
 { \
 	try { \
 		return new className(); \

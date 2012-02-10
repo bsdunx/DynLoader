@@ -66,7 +66,7 @@
  *
  *
  * @author Igor Semenov <igor@progz.ru>
- * @autho Adam Gregoire <bsdunx@gmail.com>
+ * @author Adam Gregoire <bsdunx@gmail.com>
  *
  * @version 0.0.1
  *
@@ -108,7 +108,6 @@
 
 /**
  * @namespace DynLoader
- * @brief Dynamic Module Loader
  */
 namespace DynLoader
 {
@@ -142,7 +141,7 @@ public:
 	 * @brief Reset dynamic loader
 	 * Unload all loaded libraries and free instances
 	 */
-	void Reset();
+	void Reset() const;
 
 	/**
 	 * @brief Get dynamic loader instance

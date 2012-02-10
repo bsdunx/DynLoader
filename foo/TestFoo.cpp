@@ -28,18 +28,20 @@
 */
 
 #include <platform.h>
+
+#include <Windows.h>
+
+#include <iostream>
+#include <cstdio>
+//#include <cstring> // memcpy
+//#include <cstdlib>
+
 #include <DynLoader.hpp>
 #include <LoaderException.hpp>
 
 #include "TestFoo.hpp"
 
 #include "FooInterface.hpp"
-
-#include <iostream>
-
-#include <cstdio>
-#include <cstring> // memcpy
-#include <cstdlib> // malloc
 
 #if PLATFORM_POSIX
 #include <dlfcn.h>
@@ -64,6 +66,7 @@ int TestFoo(void)
 		auto &Foo_I = dynLoader.GetClassInstance<IFoo>("./libfoo_module.so", "Foo");
 		auto &Bar_I = dynLoader.GetClassInstance<IBar>("./libfoo_module.so", "Bar");
 #endif
+
 		UNIT_TEST(true);
 
 		for(int i = 0, j = 10; i <= 10; i++, j--)

@@ -41,7 +41,6 @@
 
 /**
  * @namespace DynLoader
- * @brief DynLoader namespace
  */
 namespace DynLoader
 {
@@ -49,7 +48,7 @@ namespace DynLoader
 /**
  * @brief Dynamic instance builder
  */
-typedef DynClass * (*DynBuilder)();
+//typedef DynClass * (*DynBuilder)();
 
 /**
  * @brief Constructor
@@ -89,7 +88,7 @@ bool DynLib::Open(const PDL_CHAR * libName, bool resolveSymbols)
 	if(lib_)
 		libName_ = libName;
 	else
-		throw LoaderException(pdl_string("Could not open `") + pdl_string(libName) + "`");
+		throw LoaderException("Could not open `" + pdl_string(libName) + "`");
 
 	return !!lib_;
 }
@@ -118,14 +117,14 @@ DynClass & DynLib::GetInstance(const PDL_CHAR * className)
 	if(loadedInstance != instances_.cend())
 		return *(loadedInstance->second);
 	
-	auto const builderName(pdl_string("Create") + pdl_string(className));
+	auto const builderName("Create" + pdl_string(className));
 	
 	auto symbol = GetSymbolByName(builderName.c_str());
 	if(!symbol)
 	{
 		instances_[className] = nullptr;
-		throw LoaderException(pdl_string("Class `") + pdl_string(className) +
-		                      pdl_string("` not found in ") + libName_);
+		throw LoaderException("Class `" + pdl_string(className) +
+		                      "` not found in " + libName_);
 	}
 
 	// POSIX guarantees that the size of a pointer to object is equal to 
@@ -147,7 +146,7 @@ DynClass & DynLib::GetInstance(const PDL_CHAR * className)
 PDL_SYMBOL DynLib::GetSymbolByName(const PDL_CHAR * symbolName)
 {
 	if(!lib_)
-		throw LoaderException(pdl_string("Library is not opened"));
+		throw LoaderException("Library is not opened");
 
 #if PLATFORM_WIN32_VC || PLATFORM_WIN32_MINGW
 	return static_cast<void *>(::GetProcAddress(lib_, symbolName));
@@ -164,20 +163,20 @@ pdl_string DynLib::GetLastError() const
 {
 	try
 	{
+		pdl_string errorText;
 #if PLATFORM_WIN32_VC || PLATFORM_WIN32_MINGW
 		LPSTR lpMsgBuf = NULL;
 		const DWORD res =
 			::FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
 			                  NULL, ::GetLastError(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
 	                          lpMsgBuf, 0, nullptr);
-		pdl_string errorText;
 		if(res != 0)
 		{
 			errorText.assign(lpMsgBuf);
 			(void) ::LocalFree(lpMsgBuf);
 		}
 #elif PLATFORM_POSIX
-		const pdl_string errorText(dlerror());
+		errorText(dlerror());
 #endif
 		return errorText;
 	}

@@ -36,35 +36,15 @@
 /**
  * @brief Windows platform
  */
-#if PDL_NTDDI_VER || PDL_WINNT_VER
-  #error "Do not define PDL_NTDDI_VER or PDL_WINNT_VER use PDL_WIN_VER"
-#endif
+#  undef _WIN32_WINNT
+#  define _WIN32_WINNT 0x0501
+#  define NTDDI_VERSION NTDDI_WINXP
 
-#undef _WIN32_WINNT
-
-#define PDL_WIN2K 0x5000
-#define PDL_WINXP 0x5001
-//#define PDL_VISTA 3
-//#define PDL_WIN7 4
-
-#if PDL_WINVER == PDL_WINXP
-  #define _WIN32_WINNT 0x0500
-  #define NTDDI_VERSION NTDDI_WIN2K
-#endif
-
-#ifndef PDL_WINVER
-  //#warning "Defaulting to Win2k build to override please define PDL_WINVER before including platform.h"
-  #define PDL_DEF_WINVER PDL_WIN2K
-  #define _WIN32_WINNT 0x0500
-  #define NTDDI_VERSION NTDDI_WIN2K
-#endif
-
-#define WIN32_MEAN_AND_LEAN
-#  include <Windows.h>
+//#  include <Windows.h>
 #  if defined(_MSC_VER)
 #    define PLATFORM_WIN32_VC 1
 #    define PLATFORM 1
-#    if defined(_DEBUG)
+#    if defined(WANT_CRT_DEBUG)
 #      define _CRTDBG_MAP_ALLOC
 #      define _CRTDBG_MAP_ALLOC_NEW
 #      include <stdlib.h>
@@ -97,11 +77,8 @@
 #  endif
 
 // character types
-#  include <tchar.h>
-
 #  define PDL_CHAR char
 #  define PDL_WCHAR wchar_t
-#  define PDL_TCHAR TCHAR
 
 #  define PDL_SYMBOL void *
 
@@ -116,12 +93,12 @@
 #  define PDL_DECL_EXPORT
 #  define PDL_DECL
 
-/// Char types
+// Char types
 #  define PDL_CHAR char
 
 #  define PDL_SYMBOL void *
 
-#define INVALID_HANDLE_VALUE NULL // To keep things more consistent in init lists
+#  define INVALID_HANDLE_VALUE NULL // To keep things more consistent in init lists
 
 #endif
 
@@ -140,4 +117,3 @@ namespace DynLoader
 }
 
 #endif // __PLATFORM_H__
-

@@ -40,6 +40,7 @@ public:
 	 * @brief Test method
 	 */
 	int Fib(int n) throw();
+	int Hidden(void) throw();
 
 };
 

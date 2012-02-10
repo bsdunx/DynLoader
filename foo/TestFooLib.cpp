@@ -27,6 +27,8 @@
 
 #include "platform.h"
 
+#include <Windows.h>
+
 // TestFoo has an exported function that the injector calls.
 #include "TestFoo.hpp"
 
@@ -43,4 +45,3 @@ BOOL WINAPI DllMain(HINSTANCE hInst, DWORD dwReason, LPVOID lpReserved)
 
 	return TRUE;
 }
-

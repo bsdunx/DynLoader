@@ -41,7 +41,7 @@
 namespace DynLoader
 {
 
-/// FWD
+// FWD
 class DynLib;
 
 /**
@@ -85,9 +85,9 @@ private:
 	DynLib & GetLibInstance(const PDL_CHAR * libName);
 
 private:
-	// Libraries map
-	typedef std::unordered_map<pdl_string, DynLib *> LibMap;
-	LibMap libs_;
+	// FIXME back to vector since this container should not have more
+	// than say 128 entries.
+	std::unordered_map<pdl_string, DynLib *> libs_;
 
 }; // class DynLibManager
 

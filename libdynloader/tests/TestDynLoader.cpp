@@ -49,8 +49,7 @@ int main(int argc, char ** argv)
 	
 		for(int i = 2; i < argc; ++i)
 		{
-			ITest & instance =
-				dynLoader.GetClassInstance<ITest>(argv[1], argv[i]);
+			auto &instance = dynLoader.GetClassInstance<ITest>(argv[1], argv[i]);
 			instance.DoSomething();
 			UNIT_TEST(true);
 		}
@@ -60,11 +59,16 @@ int main(int argc, char ** argv)
 		
 		for(int i = 2; i < argc; ++i)
 		{
-			ITest & instance =
-				dynLoader.GetClassInstance<ITest>(argv[1], argv[i]);
+			auto &instance = dynLoader.GetClassInstance<ITest>(argv[1], argv[i]);
 			instance.DoSomething();
 			UNIT_TEST(true);
 		}
+
+		dynLoader.Reset();
+		UNIT_TEST(true);
+
+		dynLoader.Reset();
+		UNIT_TEST(true);
 	}
 	catch(DynLoader::LoaderException & ex)
 	{

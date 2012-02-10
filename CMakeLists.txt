@@ -18,14 +18,14 @@ include(CheckIncludeFiles)
 include(CheckLibraryExists)
 include(CheckCXXSourceCompiles)
 
-project(LIBDYNLOADER)
+project(DynLoader)
 
-set(LIBDYNLOADER_VERSION_MAJOR 0)
-set(LIBDYNLOADER_VERSION_MINOR 1)
-set(LIBDYNLOADER_VERSION_PATCH 0)
+set(DynLoader_VERSION_MAJOR 0)
+set(DynLoader_VERSION_MINOR 1)
+set(DynLoader_VERSION_PATCH 0)
 
-set(LIBDYNLOADER_VERSION
-	"${LIBDYNLOADER_VERSION_MAJOR}.${LIBDYNLOADER_VERSION_MINOR}.${LIBDYNLOADER_VERSION_PATCH}")
+set(DynLoader_VERSION
+	"${DynLoader_VERSION_MAJOR}.${DynLoader_VERSION_MINOR}.${DynLoader_VERSION_PATCH}")
 
 if(CMAKE_COMPILER_IS_GNUCXX MATCHES "1")
   set(CMAKE_CXX_FLAGS "-std=gnu++11 -Wall -pedantic -Weffc++ -fno-rtti")
@@ -33,14 +33,14 @@ if(CMAKE_COMPILER_IS_GNUCXX MATCHES "1")
   set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -O2")
   set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS} -g -O2")
 elseif(CMAKE_BUILD_ON_VISUAL_STUDIO MATCHES "1")
-  set(CMAKE_CXX_FLAGS "/EHsc /GR- /Wall /W4 /wd4251 /wd4668 /wd4820 /wd4548 /wd4710 /wd4571 /wd4127 /wd4100 /wd4512 /wd4706 /wd4242")
+  set(CMAKE_CXX_FLAGS "/EHsc /GR- /Wall /W4 /wd4251 /wd4668 /wd4820 /wd4548 /wd4710 /wd4571 /wd4127 /wd4100 /wd4512 /wd4706 /wd4242" /D"WIN32_LEAN_AND_MEAN")
   set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} /MDd -D_DEBUG /RTC1 /GS /Zi /Od")
   set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} /MD -DNDEBUG /O2")
   set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS} /MD -DNDEBUG /Zi /O2")
   set(CMAKE_CXX_STANDARD_LIBRARIES "User32.lib")
 endif()
 
-find_package(Threads)
+#find_package(Threads)
 
 if(CMAKE_SYSTEM_NAME MATCHES "Linux")
   check_library_exists(dl dlopen "" HAVE_LIBDL)
@@ -62,5 +62,4 @@ enable_testing()
 include_directories(libdynloader/include)
 
 add_subdirectory(libdynloader)
-add_subdirectory(foo)
 

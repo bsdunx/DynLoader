@@ -25,6 +25,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <platform.h>
 #include <DynClass.hpp>
 #include <DynLib.hpp>
 #include <DynLibManager.hpp>
@@ -32,8 +33,7 @@
 #include <memory>
 
 /**
- * @namespace PDL
- * @brief Portable Dynamic Loader
+ * @namespace DynLoader
  */
 namespace DynLoader
 {
@@ -60,7 +60,7 @@ DynLoader::~DynLoader() throw()
  */
 DynLoader & DynLoader::Instance()
 {
-	static DynLoader _dynLoader; // @ FIXME
+	static DynLoader _dynLoader;
 	return _dynLoader;
 }
 
@@ -73,7 +73,7 @@ DynLoader & DynLoader::Instance()
 DynClass & DynLoader::GetDynInstance(const PDL_CHAR * libName,
                                               const PDL_CHAR * className)
 {
-	auto & lib = libManager_->GetLib(libName);
+	auto &lib = libManager_->GetLib(libName);
 	return lib.GetInstance(className);
 }
 
@@ -81,7 +81,7 @@ DynClass & DynLoader::GetDynInstance(const PDL_CHAR * libName,
  * @brief Reset dynamic loader
  * Unload all loaded libraries and free instances
  */
-void DynLoader::Reset()
+void DynLoader::Reset() const
 {
 	libManager_->Reset();
 }

@@ -128,8 +128,7 @@ private:
 	pdl_string libName_;
 
 	// Symbol map
-	typedef std::unordered_map<pdl_string, DynClass *> InstanceMap;
-	InstanceMap instances_;
+	std::unordered_map<pdl_string, DynClass *> instances_;
 
 }; // class DynLib
 
