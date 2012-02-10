@@ -68,7 +68,7 @@ private:
 	// Exception description
 	const pdl_string text_;
 
-}; // class PDL_DECL LoaderException
+}; // class LoaderException
 
 } // namespace DynLoader
 

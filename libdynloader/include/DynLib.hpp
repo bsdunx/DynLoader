@@ -43,7 +43,8 @@
  */
 namespace DynLoader
 {
-/// FWD
+
+// FWD
 class DynClass;
 
 /**
@@ -72,8 +73,8 @@ public:
 	bool Open(const PDL_CHAR * libName, bool resolveSymbols = true);
 
 	/**
-	 * @brief Get default library filename extention (platform-specific)
-	 * @return default library filename extention
+	 * @brief Get default library filename extension (platform-specific)
+	 * @return default library filename extension
 	 */
 	static const PDL_CHAR * GetDefaultExt();
 
@@ -88,7 +89,7 @@ public:
 	 * @param className - [in] class name
 	 * @return pointer to class instance
 	 */
-	DynClass * GetInstance(const PDL_CHAR * className);
+	DynClass & GetInstance(const PDL_CHAR * className);
 
 	/**
 	 * @brief Get last error description

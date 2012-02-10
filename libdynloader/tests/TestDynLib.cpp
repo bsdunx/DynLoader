@@ -145,9 +145,9 @@ int main(int argc, char ** argv)
 	
 	try
 	{
-		auto class1 = lib2.GetInstance("Test1");
-		auto class2 = lib2.GetInstance("Test1");
-		UNIT_TEST(class1 && class2 && class1 == class2);
+		auto &class1 = lib2.GetInstance("Test1");
+		auto &class2 = lib2.GetInstance("Test1");
+		UNIT_TEST(&class1 && &class2 && &class1 == &class2);
 	}
 	catch(DynLoader::LoaderException & ex)
 	{

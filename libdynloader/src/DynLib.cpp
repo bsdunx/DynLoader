@@ -40,8 +40,8 @@
 #endif
 
 /**
- * @namespace PDL
- * @brief Portable Dynamic Loader
+ * @namespace DynLoader
+ * @brief DynLoader namespace
  */
 namespace DynLoader
 {
@@ -112,11 +112,11 @@ const PDL_CHAR * DynLib::GetDefaultExt()
  * @param className - [in] class name
  * @return pointer to class instance
  */
-DynClass * DynLib::GetInstance(const PDL_CHAR * className)
+DynClass & DynLib::GetInstance(const PDL_CHAR * className)
 {
 	auto const loadedInstance(instances_.find(className));
 	if(loadedInstance != instances_.cend())
-		return loadedInstance->second;
+		return *(loadedInstance->second);
 	
 	auto const builderName(pdl_string("Create") + pdl_string(className));
 	
@@ -130,13 +130,13 @@ DynClass * DynLib::GetInstance(const PDL_CHAR * className)
 
 	// POSIX guarantees that the size of a pointer to object is equal to 
 	// the size of a pointer to a function.
-	DynBuilder builder = nullptr;
-	builder = (DynBuilder)symbol;
-	DynClass * instance = (*builder)();
+	//DynBuilder builder = nullptr;
+	//builder = static_cast<DynBuilder>(symbol);
+	DynClass *instance(static_cast<DynClass *>(symbol));
 
 	instances_[className] = instance;
 
-	return instance;
+	return *instance;
 }
 
 /**
@@ -169,7 +169,7 @@ pdl_string DynLib::GetLastError() const
 		const DWORD res =
 			::FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
 			                  NULL, ::GetLastError(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-	                          reinterpret_cast<LPSTR>(&lpMsgBuf), 0, nullptr);
+	                          lpMsgBuf, 0, nullptr);
 		pdl_string errorText;
 		if(res != 0)
 		{
@@ -219,5 +219,5 @@ bool DynLib::Close()
 	return closeSuccess;
 }
 
-} // namespace PDL
+} // namespace DynLoader
 

@@ -41,7 +41,7 @@ namespace DynLoader
  * @brief Constructor
  * @param text - [in] exception description
  */
-PDL_DECL LoaderException::LoaderException( const pdl_string & text ) : text_( text )
+LoaderException::LoaderException( const pdl_string & text ) : text_( text )
 {
 	;;
 }
@@ -49,7 +49,7 @@ PDL_DECL LoaderException::LoaderException( const pdl_string & text ) : text_( te
 /**
  * @brief Destructor
  */
-PDL_DECL LoaderException::~LoaderException() throw()
+LoaderException::~LoaderException() throw()
 {
 	;;
 }
@@ -58,7 +58,7 @@ PDL_DECL LoaderException::~LoaderException() throw()
  * @brief Get exception description
  * @return exception description
  */
-PDL_DECL const char * LoaderException::what() const throw()
+const char * LoaderException::what() const throw()
 {
 	return text_.c_str();
 }

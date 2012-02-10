@@ -41,7 +41,7 @@ namespace DynLoader
 /**
  * @brief Constructor
  */
-PDL_DECL DynLoader::DynLoader() : libManager_(new DynLibManager())
+DynLoader::DynLoader() : libManager_(new DynLibManager())
 {
 	;;
 }
@@ -49,7 +49,7 @@ PDL_DECL DynLoader::DynLoader() : libManager_(new DynLibManager())
 /**
  * @brief Destructor
  */
-PDL_DECL DynLoader::~DynLoader() throw()
+DynLoader::~DynLoader() throw()
 {
 	;;
 }
@@ -58,7 +58,7 @@ PDL_DECL DynLoader::~DynLoader() throw()
  * @brief Get dynamic loader instance
  * @return dynamic loader instance
  */
-PDL_DECL DynLoader & DynLoader::Instance()
+DynLoader & DynLoader::Instance()
 {
 	static DynLoader _dynLoader; // @ FIXME
 	return _dynLoader;
@@ -70,7 +70,7 @@ PDL_DECL DynLoader & DynLoader::Instance()
  * @param className - [in] class name
  * @return class instance, 0 if failed
  */
-PDL_DECL DynClass * DynLoader::GetDynInstance(const PDL_CHAR * libName,
+DynClass & DynLoader::GetDynInstance(const PDL_CHAR * libName,
                                               const PDL_CHAR * className)
 {
 	auto & lib = libManager_->GetLib(libName);
@@ -81,7 +81,7 @@ PDL_DECL DynClass * DynLoader::GetDynInstance(const PDL_CHAR * libName,
  * @brief Reset dynamic loader
  * Unload all loaded libraries and free instances
  */
-PDL_DECL void DynLoader::Reset()
+void DynLoader::Reset()
 {
 	libManager_->Reset();
 }

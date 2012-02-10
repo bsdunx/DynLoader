@@ -58,18 +58,18 @@ int TestFoo(void)
 		UNIT_TEST(true);
 
 #if PLATFORM_WIN32_VC || PLATFORM_WIN32_MINGW
-		auto Foo_I = dynLoader.GetClassInstance<IFoo>("libfoo_module.dll", "Foo");
-		auto Bar_I = dynLoader.GetClassInstance<IBar>("libfoo_module.dll", "Bar");
+		auto &Foo_I = dynLoader.GetClassInstance<IFoo>("libfoo_module.dll", "Foo");
+		auto &Bar_I = dynLoader.GetClassInstance<IBar>("libfoo_module.dll", "Bar");
 #elif PLATFORM_POSIX
-		auto Foo_I = dynLoader.GetClassInstance<IFoo>("./libfoo_module.so", "Foo");
-		auto Bar_I = dynLoader.GetClassInstance<IBar>("./libfoo_module.so", "Bar");
+		auto &Foo_I = dynLoader.GetClassInstance<IFoo>("./libfoo_module.so", "Foo");
+		auto &Bar_I = dynLoader.GetClassInstance<IBar>("./libfoo_module.so", "Bar");
 #endif
 		UNIT_TEST(true);
 
 		for(int i = 0, j = 10; i <= 10; i++, j--)
 		{
-			fprintf(stderr, "Foo Fib(%d) = %d\n", i, Foo_I->Fib(i));
-			fprintf(stderr, "Bar Fib(%d) = %d\n", j, Bar_I->Fib(j));
+			fprintf(stderr, "Foo Fib(%d) = %d\n", i, Foo_I.Fib(i));
+			fprintf(stderr, "Bar Fib(%d) = %d\n", j, Bar_I.Fib(j));
 		}
 
 		dynLoader.Reset();
@@ -97,22 +97,22 @@ int TestFooLib(void)
 		dynLoader.Reset();
 
 #if PLATFORM_WIN32_VC || PLATFORM_WIN32_MINGW
-		IFoo * Foo_I =
+		IFoo & Foo_I =
 			dynLoader.GetClassInstance<IFoo>("libfoo_module.dll", "Foo");
-		IBar * Bar_I  = 
+		IBar & Bar_I  = 
 			dynLoader.GetClassInstance<IBar>("libfoo_module.dll", "Bar");
 
 #elif PLATFORM_POSIX
-		IFoo * Foo_I =
+		IFoo & Foo_I =
 			dynLoader.GetClassInstance<IFoo>("./libfoo_module.so", "Foo");
-		IBar * Bar_I =
+		IBar & Bar_I =
 			dynLoader.GetClassInstance<IBar>("./libfoo_module.so", "Bar");
 #endif
 
 		for(int i = 0, j = 10; i <= 10; i++, j--)
 		{
-			fprintf(stderr, "Foo Fib(%d) = %d\n", i, Foo_I->Fib(i));
-			fprintf(stderr, "Bar Fib(%d) = %d\n", j, Bar_I->Fib(j));
+			fprintf(stderr, "Foo Fib(%d) = %d\n", i, Foo_I.Fib(i));
+			fprintf(stderr, "Bar Fib(%d) = %d\n", j, Bar_I.Fib(j));
 		}
 
 #if PLATFORM_WIN32_VC || PLATFORM_WIN32_MINGW

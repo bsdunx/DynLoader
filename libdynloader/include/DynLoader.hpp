@@ -133,16 +133,9 @@ public:
 	 * Class should be derived from DynamicClass
 	 */
 	template<typename Class>
-	Class * GetClassInstance(const PDL_CHAR * libName, const PDL_CHAR * className)
+	Class & GetClassInstance(const PDL_CHAR * libName, const PDL_CHAR * className)
 	{
-#if PLATFORM_WIN32_VC
-#pragma warning(push)
-#pragma warning(disable : 4946)
-#endif
-		return reinterpret_cast<Class *>(GetDynInstance(libName, className));
-#if PLATFORM_WIN32_VC
-#pragma warning(pop)
-#endif
+		return static_cast<Class &>(GetDynInstance(libName, className));
 	}
 
 	/**
@@ -175,16 +168,16 @@ private:
 	 * @param className - [in] class name
 	 * @return class instance, 0 if failed
 	 */
-	DynClass * GetDynInstance(const PDL_CHAR * libName, const PDL_CHAR * className);
+	DynClass & GetDynInstance(const PDL_CHAR * libName, const PDL_CHAR * className);
 	
-	/// Forbid copy constructor and assignment operator
+	// Forbid copy constructor and assignment operator
 	DynLoader(const DynLoader &);
 	DynLoader & operator= (const DynLoader &);
 
-	/// Library manager
+	// Library manager
 	std::unique_ptr<DynLibManager> libManager_;
 
-}; // class PDL_DECL DynLoader
+}; // class DynLoader
 
 } // namespace DynLoader
 
