@@ -43,7 +43,7 @@ namespace DynLoader
  * @class LoaderException LoaderException.hpp <LoaderException.hpp>
  * @brief Dynamic loader exception class
  */
-class LoaderException: public std::exception
+class LoaderException : public std::exception
 {
 
 public:
@@ -66,7 +66,7 @@ public:
 
 private:
 	// Exception description
-	const pdl_string & text_;
+	pdl_string text_;
 
 }; // class LoaderException
 

@@ -53,7 +53,7 @@ public:
 	/**
 	 * @brief Destroy class instance
 	 */
-	void Destroy() const throw() { delete this; }
+	void Destroy() throw() { delete this; }
 
 protected:
 	/**

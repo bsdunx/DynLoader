@@ -53,9 +53,8 @@ namespace DynLoader
 /**
  * @brief Constructor
  */
-DynLib::DynLib() : lib_(nullptr), libName_(), instances_()
+DynLib::DynLib() : lib_(nullptr), libName_(), lastError_(""), instances_()
 {
-	;;
 }
 
 /**
@@ -71,7 +70,7 @@ DynLib::~DynLib() throw()
  * @param libName - [in] library file name
  * @return true - loaded successfully, false otherwise
  *
- * @todo Add path alteration for windows. eBoLA
+ * @todo Add path alteration for windows.
  */
 bool DynLib::Open(const PDL_CHAR * libName, bool resolveSymbols)
 {
@@ -91,19 +90,6 @@ bool DynLib::Open(const PDL_CHAR * libName, bool resolveSymbols)
 		throw LoaderException("Could not open `" + pdl_string(libName) + "`");
 
 	return !!lib_;
-}
-
-/**
- * @brief Get default library filename extension (platform-specific)
- * @return default library filename extension
- */
-const PDL_CHAR * DynLib::GetDefaultExt()
-{
-#if PLATFORM_WIN32_VC || PLATFORM_WIN32_MINGW
-	return ".dll";
-#elif PLATFORM_POSIX
-	return ".so";
-#endif
 }
 
 /**
@@ -159,31 +145,33 @@ PDL_SYMBOL DynLib::GetSymbolByName(const PDL_CHAR * symbolName)
  * @brief Get last error description
  * @return last error description
  */
-pdl_string DynLib::GetLastError() const
+pdl_string & DynLib::GetLastError()
 {
-	try
-	{
-		pdl_string errorText;
 #if PLATFORM_WIN32_VC || PLATFORM_WIN32_MINGW
-		LPSTR lpMsgBuf = NULL;
-		const DWORD res =
-			::FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
-			                  NULL, ::GetLastError(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-	                          lpMsgBuf, 0, nullptr);
-		if(res != 0)
-		{
-			errorText.assign(lpMsgBuf);
-			(void) ::LocalFree(lpMsgBuf);
-		}
-#elif PLATFORM_POSIX
-		errorText(dlerror());
-#endif
-		return errorText;
-	}
-	catch (...)
+	LPSTR lpMsgBuf = NULL;
+	const DWORD res =
+		::FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER|FORMAT_MESSAGE_FROM_SYSTEM|FORMAT_MESSAGE_IGNORE_INSERTS,
+				NULL, ::GetLastError(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+				lpMsgBuf, 0, nullptr);
+	if(res != 0)
 	{
-		return pdl_string("Exception attempting to get last error.");
+		lastError_.assign(lpMsgBuf);
+		(void) ::LocalFree(lpMsgBuf);
 	}
+#elif PLATFORM_POSIX
+	const char* err = ::dlerror();
+	if(err != nullptr)
+		lastError_.assign(err);
+#endif
+	return lastError_;
+}
+
+/**
+ * @brief Clear last retrieved error description
+ */
+void DynLib::ClearLastError()
+{
+	lastError_.clear();
 }
 
 /**

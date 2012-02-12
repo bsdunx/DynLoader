@@ -95,7 +95,13 @@ public:
 	 * @brief Get last error description
 	 * @return last error description
 	 */
-	pdl_string GetLastError() const;
+	pdl_string & GetLastError();
+
+	/**
+	 * @brief Clear last retrieved error description
+	 * 
+	 */
+	void ClearLastError();
 
 	/**
 	 * @brief Close library
@@ -126,6 +132,7 @@ private:
 
 	// Library name
 	pdl_string libName_;
+	pdl_string lastError_;
 
 	// Symbol map
 	std::unordered_map<pdl_string, DynClass *> instances_;

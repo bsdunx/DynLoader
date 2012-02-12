@@ -27,21 +27,22 @@
 
 #include <platform.h>
 
-#include "TestClass2.hpp"
+#include "TestClass.hpp"
 #include <cstdio>
 
 /**
  * @brief Test method
  */
-void Test3::DoSomething() throw()
+void Test1::DoSomething() throw()
 {
-	fprintf(stderr, "Test3::DoSomething()\n");
+	fprintf(stderr, "Test1::DoSomething()\n");
 }
 
 /**
  * @brief Test method
  */
-void Test4::DoSomething() throw()
+void Test2::DoSomething() throw()
 {
-	fprintf(stderr, "Test4::DoSomething()\n");
+	fprintf(stderr, "Test2::DoSomething()\n");
 }
+

@@ -27,8 +27,13 @@ set(DynLoader_VERSION_PATCH 0)
 set(DynLoader_VERSION
 	"${DynLoader_VERSION_MAJOR}.${DynLoader_VERSION_MINOR}.${DynLoader_VERSION_PATCH}")
 
+set(OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
+set(LIBRARY_OUTPUT_PATH ${OUTPUT_PATH})
+set(EXECUTABLE_OUTPUT_PATH ${OUTPUT_PATH})
+
 if(CMAKE_COMPILER_IS_GNUCXX MATCHES "1")
-  set(CMAKE_CXX_FLAGS "-std=gnu++11 -Wall -pedantic -Weffc++ -fno-rtti")
+  set(CMAKE_CXX_FLAGS "-std=gnu++0x -Wall -pedantic -Weffc++ -fno-rtti")
+
   set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} -g -D_DEBUG -O")
   set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -O2")
   set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS} -g -O2")
@@ -39,8 +44,6 @@ elseif(CMAKE_BUILD_ON_VISUAL_STUDIO MATCHES "1")
   set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS} /MD -DNDEBUG /Zi /O2")
   set(CMAKE_CXX_STANDARD_LIBRARIES "User32.lib")
 endif()
-
-#find_package(Threads)
 
 if(CMAKE_SYSTEM_NAME MATCHES "Linux")
   check_library_exists(dl dlopen "" HAVE_LIBDL)
@@ -58,8 +61,6 @@ endif()
 set(CMAKE_BUILD_TYPE Debug)
 
 enable_testing()
-
-include_directories(libdynloader/include)
 
 add_subdirectory(libdynloader)
 

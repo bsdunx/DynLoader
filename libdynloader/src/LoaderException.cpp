@@ -32,7 +32,6 @@
 
 /**
  * @namespace DynLoader
- * @brief Dynamic Loader
  */
 namespace DynLoader
 {
@@ -43,7 +42,6 @@ namespace DynLoader
  */
 LoaderException::LoaderException(const pdl_string & text) : text_(text)
 {
-	;;
 }
 	
 /**
@@ -51,7 +49,6 @@ LoaderException::LoaderException(const pdl_string & text) : text_(text)
  */
 LoaderException::~LoaderException() throw()
 {
-	;;
 }
 
 /**

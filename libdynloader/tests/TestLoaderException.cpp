@@ -31,7 +31,7 @@
 
 void throwing_func()
 {
-	throw DynLoader::LoaderException( "Some text" );
+	throw DynLoader::LoaderException("Some text");
 }
  
 int main( int argc, char ** argv )
@@ -40,33 +40,34 @@ int main( int argc, char ** argv )
 	try
 	{
 		throwing_func();
-		UNIT_TEST( false );
+		UNIT_TEST(false);
 	}
-	catch( DynLoader::LoaderException & ex )
+	catch(const DynLoader::LoaderException & ex)
 	{
-		fprintf( stderr, "OK: PDL::LoaderException catched: %s\n", ex.what() );
-		UNIT_TEST( true );
+		fprintf(stderr, "OK: LoaderException caught: %s\n", ex.what());
+		UNIT_TEST(true);
 	}
-	catch( ... )
+	catch(...)
 	{
-		UNIT_TEST( false );
+		UNIT_TEST(false);
 	}
 	
 	// Test catching std::exception
 	try
 	{
 		throwing_func();
-		UNIT_TEST( false );
+		UNIT_TEST(false);
 	}
-	catch( std::exception & ex )
+	catch(const std::exception & ex)
 	{
-		fprintf( stderr, "OK: std::exception catched: %s\n", ex.what() );
-		UNIT_TEST( true );
+		fprintf(stderr, "OK: std::exception caught: %s\n", ex.what());
+		UNIT_TEST(true);
 	}
-	catch( ... )
+	catch(...)
 	{
-		UNIT_TEST( false );
+		UNIT_TEST(false);
 	}
 
 	return 0;
 }
+

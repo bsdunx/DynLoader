@@ -34,9 +34,9 @@
 
 int main(int argc, char ** argv)
 {
-	if(argc != 3)
+	if(argc != 2)
 	{
-		fprintf(stderr, "ERROR: Usage %s <libName1> <libName2>\n", argv[0]);
+		fprintf(stderr, "ERROR: Usage %s <libName>\n", argv[0]);
 		return -1;
 	}
 	
@@ -47,7 +47,7 @@ int main(int argc, char ** argv)
 
 	try
 	{
-		libManager.GetLib(0);
+		libManager.GetLib(nullptr);
 		UNIT_TEST(false);
 	}
 	catch(DynLoader::LoaderException & ex)
@@ -78,7 +78,6 @@ int main(int argc, char ** argv)
 	try
 	{
 		libManager.GetLib(argv[1]);
-		libManager.GetLib(argv[2]);
 		UNIT_TEST(true);
 	}
 	catch(DynLoader::LoaderException & ex)

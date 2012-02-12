@@ -29,10 +29,10 @@
 #include "TestInterface.hpp"
 
 /**
- * @class Test3
- * @brief Test class 3
+ * @class Test1
+ * @brief Test class 1
  */
-class Test3 : public ITest
+class Test1 : public ITest
 {
 
 public:
@@ -43,13 +43,13 @@ public:
 
 };
 
-EXPORT_DYN_CLASS(Test3)
+EXPORT_DYN_CLASS(Test1)
 
 /**
- * @class ITest4
- * @brief Test class 4
+ * @class Test2
+ * @brief Test class 2
  */
-class Test4 : public ITest
+class Test2 : public ITest
 {
 
 public:
@@ -60,5 +60,5 @@ public:
 
 };
 
-EXPORT_DYN_CLASS(Test4)
+EXPORT_DYN_CLASS(Test2)
 

@@ -55,6 +55,7 @@ int main(int argc, char ** argv)
 	{
 		fprintf(stderr, "Exception: %s, LastError: (%s)\n", 
 		        ex.what(), lib1.GetLastError().c_str());
+		lib1.ClearLastError();
 		UNIT_TEST(true);
 	}
 	catch(...)
@@ -65,11 +66,14 @@ int main(int argc, char ** argv)
 	try
 	{
 		lib2.Open(argv[1]);
+		UNIT_TEST(true);
 	}
 	catch(DynLoader::LoaderException & ex)
 	{
 		fprintf(stderr, "Exception: %s, LastError: (%s)\n", 
 		        ex.what(), lib2.GetLastError().c_str());
+		lib2.ClearLastError();
+		UNIT_TEST(false);
 	}
 	catch(...)
 	{
@@ -79,11 +83,13 @@ int main(int argc, char ** argv)
 	try
 	{
 		lib3.Open(0);
+		//UNIT_TEST(false);
 	}
 	catch(DynLoader::LoaderException & ex)
 	{
 		fprintf(stderr, "Exception: %s, LastError: (%s)\n", 
 		        ex.what(), lib3.GetLastError().c_str());
+		lib3.ClearLastError();
 		UNIT_TEST(true);
 	}
 	catch(...)
@@ -105,6 +111,7 @@ int main(int argc, char ** argv)
 	{
 		fprintf(stderr, "Exception: %s, LastError: (%s)\n", 
 		        ex.what(), lib1.GetLastError().c_str());
+		lib1.ClearLastError();
 		UNIT_TEST(true);
 	}
 	catch(...)
@@ -120,6 +127,7 @@ int main(int argc, char ** argv)
 	catch(DynLoader::LoaderException & ex)
 	{
 		fprintf(stderr, "Exception: %s, LastError: (%s)\n", ex.what(), lib2.GetLastError().c_str());
+		lib2.ClearLastError();
 		UNIT_TEST(true);
 	}
 	catch(...)
@@ -136,6 +144,7 @@ int main(int argc, char ** argv)
 	catch(DynLoader::LoaderException & ex)
 	{
 		fprintf(stderr, "Exception: %s, LastError: (%s)\n", ex.what(), lib2.GetLastError().c_str());
+		lib2.ClearLastError();
 		UNIT_TEST(false);
 	}
 	catch(...)
@@ -152,6 +161,7 @@ int main(int argc, char ** argv)
 	catch(DynLoader::LoaderException & ex)
 	{
 		fprintf(stderr, "Exception: %s, LastError: (%s)\n", ex.what(), lib2.GetLastError().c_str());
+		lib2.ClearLastError();
 		UNIT_TEST(false);
 	}
 	catch(...)

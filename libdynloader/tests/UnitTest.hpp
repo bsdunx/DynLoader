@@ -26,32 +26,31 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef __PDL_UNIT_TEST_HPP__
-#define __PDL_UNIT_TEST_HPP__
+#ifndef __UNITTEST_HPP__
+#define __UNITTEST_HPP__
 
 #include <platform.h>
 
-namespace PDL
+namespace DynLoader 
 {
 	static int TestCount = 0;
 }
 
 #define UNIT_TEST(condition) \
 { \
-	PDL::TestCount++; \
+	DynLoader::TestCount++; \
 	if(!(condition)) \
 	{ \
 		fprintf(stderr, "ERROR: Test #%d Condition " #condition " failed at %s:%d\n", \
-				PDL::TestCount, __FILE__, __LINE__); \
-		return -1; \
+				DynLoader::TestCount, __FILE__, __LINE__); \
+		return 1; \
 	} \
 	else \
 	{ \
 		fprintf(stderr, "OK: Test #%d Condition " #condition " is ok at %s:%d\n", \
-				PDL::TestCount, __FILE__, __LINE__); \
-		return 0; \
+				DynLoader::TestCount, __FILE__, __LINE__); \
 	} \
 }
 
-#endif // __PDL_UNIT_TEST_HPP__
+#endif // __UNITTEST_HPP__
 
