@@ -48,7 +48,7 @@ class DynLib;
  * @class DynLibManager DynLibManager.hpp <DynLibManager.hpp>
  * @brief Dynamic library instance manager
  */
-class DynLibManager
+class API_LOCAL DynLibManager
 {
 
 public:

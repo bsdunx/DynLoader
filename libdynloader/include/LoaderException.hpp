@@ -43,7 +43,7 @@ namespace DynLoader
  * @class LoaderException LoaderException.hpp <LoaderException.hpp>
  * @brief Dynamic loader exception class
  */
-class LoaderException : public std::exception
+class API_LOCAL LoaderException : public std::exception
 {
 
 public:

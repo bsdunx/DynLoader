@@ -32,7 +32,7 @@
  * @class Test1
  * @brief Test class 1
  */
-class Test1 : public ITest
+class API_LOCAL Test1 : public ITest
 {
 
 public:
@@ -49,7 +49,7 @@ EXPORT_DYN_CLASS(Test1)
  * @class Test2
  * @brief Test class 2
  */
-class Test2 : public ITest
+class API_LOCAL Test2 : public ITest
 {
 
 public:

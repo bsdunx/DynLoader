@@ -40,7 +40,7 @@ namespace DynLoader
  * @class DynClass DynClass.hpp <DynClass.hpp>
  * @brief Common interface for all dynamically loaded classes
  */
-class DynClass
+class API_LOCAL DynClass
 {
 
 public:

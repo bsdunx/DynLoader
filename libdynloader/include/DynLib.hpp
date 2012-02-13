@@ -51,7 +51,7 @@ class DynClass;
  * @class DynLib DynLib.hpp <DynLib.hpp>
  * @brief Platform-specific dynamic library
  */
-class DynLib
+class API_LOCAL DynLib
 {
 public:
 
