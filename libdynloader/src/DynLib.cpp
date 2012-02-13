@@ -112,7 +112,7 @@ DynClass & DynLib::GetInstance(const PDL_CHAR * className)
 
 	// POSIX guarantees that the size of a pointer to object is equal to 
 	// the size of a pointer to a function.
-	DynClass *instance = static_cast<DynBuilder>(symbol)();
+	DynClass *instance = reinterpret_cast<DynBuilder>(symbol)();
 	if(!instance)
 		throw LoaderException("Unable to create instance of class `" + pdl_string(className));
 
@@ -132,7 +132,7 @@ PDL_SYMBOL DynLib::GetSymbolByName(const PDL_CHAR * symbolName)
 		throw LoaderException("Library is not opened");
 
 #if PLATFORM_WIN32_VC || PLATFORM_WIN32_MINGW
-	return static_cast<void *>(::GetProcAddress(lib_, symbolName));
+	return reinterpret_cast<void *>(::GetProcAddress(lib_, symbolName));
 #elif PLATFORM_POSIX
 	return ::dlsym(lib_, symbolName);
 #endif
@@ -142,7 +142,7 @@ PDL_SYMBOL DynLib::GetSymbolByName(const PDL_CHAR * symbolName)
  * @brief Get last error description
  * @return last error description
  */
-pdl_string & DynLib::GetLastError()
+const pdl_string & DynLib::GetLastError()
 {
 #if PLATFORM_WIN32_VC || PLATFORM_WIN32_MINGW
 	LPSTR lpMsgBuf = NULL;
@@ -194,8 +194,6 @@ bool DynLib::Close()
 #endif
 		lib_ = nullptr;
 	}
-
-	libName_.clear();
 
 	if(!closeSuccess)
 		GetLastError();

@@ -69,18 +69,10 @@ public:
 	void Reset();
 
 	/**
-	 * @brief Get dynamic library
+	 * @brief Get dynamic library instance
 	 * @param libName - [in] library file name
 	 * @return dynamic library
 	 * @throw LoaderException - cannot load library
-	 */
-	DynLib & GetLib(const PDL_CHAR * libName);
-
-private:
-	/**
-	 * @brief Get dynamic library instance
-	 * @param libName - [in] library file name
-	 * @return dynamic library instance
 	 */
 	DynLib & GetLibInstance(const PDL_CHAR * libName);
 

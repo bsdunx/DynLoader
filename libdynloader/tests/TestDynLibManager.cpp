@@ -47,7 +47,7 @@ int main(int argc, char ** argv)
 
 	try
 	{
-		libManager.GetLib(nullptr);
+		libManager.GetLibInstance(nullptr);
 		UNIT_TEST(false);
 	}
 	catch(DynLoader::LoaderException & ex)
@@ -62,7 +62,7 @@ int main(int argc, char ** argv)
 
 	try
 	{
-		libManager.GetLib("SomeNonExistentLibrary");
+		libManager.GetLibInstance("SomeNonExistentLibrary");
 		UNIT_TEST(false);
 	}
 	catch(DynLoader::LoaderException & ex)
@@ -77,7 +77,7 @@ int main(int argc, char ** argv)
 	
 	try
 	{
-		libManager.GetLib(argv[1]);
+		libManager.GetLibInstance(argv[1]);
 		UNIT_TEST(true);
 	}
 	catch(DynLoader::LoaderException & ex)

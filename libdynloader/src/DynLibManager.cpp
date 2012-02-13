@@ -85,22 +85,6 @@ void DynLibManager::Reset()
 }
 
 /**
- * @brief Get dynamic library
- * @param libName - [in] library file name
- * @return dynamic library
- * @throw LoaderException - cannot load library
- */
-DynLib & DynLibManager::GetLib(const PDL_CHAR * libName)
-{
-	auto &lib = GetLibInstance(libName);
-
-	if(!lib.Opened())
-		throw LoaderException("`" + pdl_string(libName) + "` is not opened.");
-
-	return lib;
-}
-
-/**
  * @brief Get dynamic library instance
  * @param libName - [in] library file name
  * @return dynamic library instance
@@ -118,7 +102,10 @@ DynLib & DynLibManager::GetLibInstance(const PDL_CHAR * libName)
 	else
 	{
 		lib = new DynLib();
-		if(lib && !lib->Open(libName, true))
+		if(lib == nullptr)
+			throw LoaderException("Unable to create new DynLib");
+
+		if(!lib->Open(libName, true))
 		{
 			delete lib;
 			throw LoaderException("Cannot load library `" + pdl_string(libName) + 

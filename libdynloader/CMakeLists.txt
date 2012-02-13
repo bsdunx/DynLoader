@@ -86,10 +86,8 @@ set_target_properties(TestDynLoader PROPERTIES PREFIX "")
 target_link_libraries(TestDynLoader libdynloader)
 
 if(WIN32 AND NOT CYGWIN)
-  add_test(TestDynLoader                          
-    ${OUTPUT_PATH}/TestDynLoader libtest_module.dll Test1 Test2)
+  add_test(TestDynLoader ${OUTPUT_PATH}/TestDynLoader libtest_module.dll Test1 Test2)
 else()
-  add_test(TestDynLoader                          
-    ${OUTPUT_PATH}/TestDynLoader ./libtest_module.so Test1 Test2)
+  add_test(TestDynLoader ${OUTPUT_PATH}/TestDynLoader ./libtest_module.so Test1 Test2)
 endif()
 

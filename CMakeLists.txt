@@ -34,7 +34,7 @@ if(WIN32)
 endif()
 
 if(CMAKE_COMPILER_IS_GNUCXX MATCHES "1")
-  set(CMAKE_CXX_FLAGS "-std=gnu++11 -Wall -pedantic -Weffc++ -fno-rtti")
+  set(CMAKE_CXX_FLAGS "-std=gnu++0x -Wall -pedantic -Weffc++ -fno-rtti")
   set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} -g -D_DEBUG -O")
   set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -O2")
   set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS} -g -O2")

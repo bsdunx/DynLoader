@@ -89,7 +89,7 @@ public:
 	 * @brief Get last error description
 	 * @return last error description
 	 */
-	pdl_string & GetLastError();
+	const pdl_string & GetLastError();
 
 	/**
 	 * @brief Clear last retrieved error description

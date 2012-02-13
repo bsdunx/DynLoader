@@ -43,7 +43,6 @@ namespace DynLoader
  */
 DynLoader::DynLoader() : libManager_(new DynLibManager())
 {
-	;;
 }
 
 /**
@@ -51,7 +50,6 @@ DynLoader::DynLoader() : libManager_(new DynLibManager())
  */
 DynLoader::~DynLoader() throw()
 {
-	;;
 }
 
 /**
@@ -73,7 +71,7 @@ DynLoader & DynLoader::Instance()
 DynClass & DynLoader::GetDynInstance(const PDL_CHAR * libName,
                                               const PDL_CHAR * className)
 {
-	auto &lib = libManager_->GetLib(libName);
+	auto &lib = libManager_->GetLibInstance(libName);
 	return lib.GetInstance(className);
 }
 
