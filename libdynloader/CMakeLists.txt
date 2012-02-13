@@ -37,7 +37,6 @@ install(TARGETS libdynloader libdynloader-static DESTINATION lib)
 add_library(libtest_module MODULE tests/TestClass.cpp tests/TestClass.hpp tests/TestInterface.hpp)
 add_dependencies(libtest_module libdynloader)
 set_target_properties(libtest_module PROPERTIES PREFIX "")
-set_target_properties(libtest_module PROPERTIES COMPILE_FLAGS -DSHARED)
 
 add_executable(TestLoaderException tests/TestLoaderException.cpp src/LoaderException.cpp)
 add_dependencies(TestLoaderException libdynloader)
@@ -69,11 +68,9 @@ if(CMAKE_SYSTEM_NAME MATCHES "Linux")
 endif()
 
 if(WIN32 AND NOT CYGWIN)
-  add_test(TestDynLibManager
-    ${OUTPUT_PATH}/TestDynLibManager libtest_module.dll)
+  add_test(TestDynLibManager ${OUTPUT_PATH}/TestDynLibManager libtest_module.dll)
 else()
-  add_test(TestDynLibManager                       
-    ${OUTPUT_PATH}/TestDynLibManager ./libtest_module.so)
+  add_test(TestDynLibManager ${OUTPUT_PATH}/TestDynLibManager ./libtest_module.so)
 endif()
 
 add_executable(TestDynLoader tests/TestDynLoader.cpp)
