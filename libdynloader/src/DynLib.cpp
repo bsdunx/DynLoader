@@ -112,8 +112,12 @@ DynClass & DynLib::GetInstance(const PDL_CHAR * className)
 
 	// POSIX guarantees that the size of a pointer to object is equal to 
 	// the size of a pointer to a function.
-	DynClass *instance = reinterpret_cast<DynBuilder>(symbol)();
-	if(!instance)
+	DynBuilder builder = reinterpret_cast<DynBuilder>(symbol);
+	if(builder == nullptr)
+		throw LoaderException("Unable to create builder pointer for factory function" + builderName);
+
+	DynClass * instance = builder();
+	if(instance == nullptr)
 		throw LoaderException("Unable to create instance of class `" + pdl_string(className));
 
 	instances_[className] = instance;

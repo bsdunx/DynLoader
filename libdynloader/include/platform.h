@@ -95,9 +95,6 @@
 #  define PLATFORM_POSIX 1
 #  define PLATFORM 1
 
-#  define PDL_DECL_EXPORT
-#  define PDL_DECL
-
 // Char types
 #  define PDL_CHAR char
 
