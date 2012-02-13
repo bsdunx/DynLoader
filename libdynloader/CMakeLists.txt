@@ -14,8 +14,8 @@ endif()
 
 set_target_properties(libdynloader PROPERTIES PREFIX "")
 set_target_properties(libdynloader PROPERTIES LINKER_LANGUAGE CXX)
-set_target_properties(libdynloader PROPERTIES DEFINE_SYMBOL PDL_EXPORT)
-set_target_properties(libdynloader PROPERTIES COMPILE_FLAGS -DPDL_SHARED)
+set_target_properties(libdynloader PROPERTIES DEFINE_SYMBOL EXPORTS)
+set_target_properties(libdynloader PROPERTIES COMPILE_FLAGS -DSHARED)
 set_target_properties(libdynloader PROPERTIES VERSION ${DynLoader_VERSION}
                                               SOVERSION ${DynLoader_VERSION_MAJOR})
 
@@ -37,7 +37,7 @@ install(TARGETS libdynloader libdynloader-static DESTINATION lib)
 add_library(libtest_module MODULE tests/TestClass.cpp tests/TestClass.hpp tests/TestInterface.hpp)
 add_dependencies(libtest_module libdynloader)
 set_target_properties(libtest_module PROPERTIES PREFIX "")
-set_target_properties(libtest_module PROPERTIES COMPILE_FLAGS -DPDL_SHARED)
+set_target_properties(libtest_module PROPERTIES COMPILE_FLAGS -DSHARED)
 
 add_executable(TestLoaderException tests/TestLoaderException.cpp ${LIBDYNLOADER_SRCS})
 add_dependencies(TestLoaderException libdynloader)

@@ -120,7 +120,7 @@ class DynLibManager;
  * @class DynLoader DynLoader.hpp <DynLoader.hpp>
  * @brief Dynamic loader
  */
-class PDL_DECL DynLoader
+class API_EXPORT DynLoader
 {
 
 public:

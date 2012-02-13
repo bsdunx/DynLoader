@@ -36,7 +36,7 @@ void throwing_func()
  
 int main( int argc, char ** argv )
 {
-	// Test catching PDL::LoaderException
+	// Test catching DynLoader::LoaderException
 	try
 	{
 		throwing_func();
@@ -52,22 +52,6 @@ int main( int argc, char ** argv )
 		UNIT_TEST(false);
 	}
 	
-	// Test catching std::exception
-	try
-	{
-		throwing_func();
-		UNIT_TEST(false);
-	}
-	catch(const std::exception & ex)
-	{
-		fprintf(stderr, "OK: std::exception caught: %s\n", ex.what());
-		UNIT_TEST(true);
-	}
-	catch(...)
-	{
-		UNIT_TEST(false);
-	}
-
 	return 0;
 }
 

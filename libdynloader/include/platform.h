@@ -32,22 +32,33 @@
 // @todo Push detection of platform and toolchain to cmake
 #undef PLATFORM
 
-#ifdef PDL_SHARED
-#  ifdef _WIN32
-#    define PDL_DECL_EXPORT __declspec(dllexport)
-#    define PDL_DECL_IMPORT __declspec(dllimport)
-#  else
-#    define PDL_DECL_EXPORT
-#    define PDL_DECL_IMPORT
-#  endif
-#  ifdef PDL_EXPORT
-#    define PDL_DECL PDL_DECL_EXPORT
-#  else
-#    define PDL_DECL PDL_DECL_IMPORT
-#  endif
+#if defined _WIN32 || defined __CYGWIN__
+# define API_HELPER_IMPORT __declspec(dllimport)
+# define API_HELPER_EXPORT __declspec(dllexport)
+# define API_HELPER_LOCAL
 #else
-#  define PDL_DECL
+# if __GNUC__ >= 4
+#  define API_HELPER_IMPORT __attribute__ ((visibility ("default")))
+#  define API_HELPER_EXPORT __attribute__ ((visibility ("default")))
+#  define API_HELPER_LOCAL  __attribute__ ((visibility ("hidden")))
+# else
+#  define API_HELPER_IMPORT
+#  define API_HELPER_EXPORT
+#  define API_HELPER_LOCAL
+# endif
 #endif
+
+#ifdef SHARED
+# ifdef EXPORTS
+#  define API_EXPORT API_HELPER_EXPORT
+# else
+#  define API_EXPORT API_HELPER_IMPORT
+# endif
+# define API_LOCAL API_HELPER_LOCAL
+#else // !SHARED
+# define API_EXPORT
+# define API_LOCAL
+#endif // SHARED
 
 #if defined(_WIN32)
 /**
