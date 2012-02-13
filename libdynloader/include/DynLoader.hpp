@@ -168,7 +168,7 @@ private:
 	 * @param className - [in] class name
 	 * @return class instance, 0 if failed
 	 */
-	DynClass & GetDynInstance(const PDL_CHAR * libName, const PDL_CHAR * className);
+	DynClass & API_LOCAL GetDynInstance(const PDL_CHAR * libName, const PDL_CHAR * className);
 	
 	// Forbid copy constructor and assignment operator
 	DynLoader(const DynLoader &);

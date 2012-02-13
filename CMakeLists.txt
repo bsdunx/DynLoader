@@ -27,6 +27,12 @@ set(DynLoader_VERSION_PATCH 0)
 set(DynLoader_VERSION
 	"${DynLoader_VERSION_MAJOR}.${DynLoader_VERSION_MINOR}.${DynLoader_VERSION_PATCH}")
 
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE Debug CACHE STRING
+    "Choose one of the following build types: None Debug Release RelWithDebInfo MinSizeRel." 
+    FORCE)
+endif()
+
 if(WIN32)
   if(MSVC)
     set(CMAKE_BUILD_ON_VISUAL_STUDIO 1)
@@ -34,9 +40,10 @@ if(WIN32)
 endif()
 
 if(CMAKE_COMPILER_IS_GNUCXX MATCHES "1")
-  set(CMAKE_CXX_FLAGS "-std=gnu++0x -Wall -pedantic -Weffc++ -fno-rtti")
+  set(CMAKE_CXX_FLAGS "-std=gnu++0x -Wall -pedantic -Weffc++ -fno-rtti -fvisibility=hidden -fvisibility-inlines-hidden")
   set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} -g -D_DEBUG -O")
   set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -O2")
+  set(CMAKE_CXX_FLAGS_MINSIZEREL "${CMAKE_CXX_FLAGS} -Os")
   set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS} -g -O2")
 elseif(CMAKE_BUILD_ON_VISUAL_STUDIO MATCHES "1")
   set(CMAKE_CXX_FLAGS "/EHsc /GR- /Wall /WL /W4 /wd4251 /wd4668 /wd4820 /wd4548 /wd4710 /wd4571 /wd4127 /wd4100 /wd4512 /wd4706 /wd4242 /DWIN32_LEAN_AND_MEAN")
@@ -52,8 +59,6 @@ if(CMAKE_SYSTEM_NAME MATCHES "Linux")
     message(FATAL_ERROR "Cannot find libdl")
   endif()
 endif(CMAKE_SYSTEM_NAME MATCHES "Linux")
-
-set(CMAKE_BUILD_TYPE Debug)
 
 enable_testing()
 

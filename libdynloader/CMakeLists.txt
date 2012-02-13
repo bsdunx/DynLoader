@@ -6,7 +6,7 @@ source_group("LibDynLoader Headers" FILES ${LIBDYNLOADER_INCS} ${CMAKE_CURRENT_B
 
 include_directories(include)
 
-add_library(libdynloader SHARED ${LIBDYNLOADER_SRCS} ${LIBDYNLOADER_INCS})
+add_library(libdynloader SHARED ${LIBDYNLOADER_SRCS})
 
 if(CMAKE_SYSTEM_NAME MATCHES "Linux")
   target_link_libraries(libdynloader c dl)
@@ -19,7 +19,7 @@ set_target_properties(libdynloader PROPERTIES COMPILE_FLAGS -DSHARED)
 set_target_properties(libdynloader PROPERTIES VERSION ${DynLoader_VERSION}
                                               SOVERSION ${DynLoader_VERSION_MAJOR})
 
-add_library(libdynloader-static STATIC ${LIBDYNLOADER_SRCS} ${LIBDYNLOADER_INCS})
+add_library(libdynloader-static STATIC ${LIBDYNLOADER_SRCS})
 if(CMAKE_SYSTEM_NAME MATCHES "Linux")
   target_link_libraries(libdynloader-static c dl)
 endif()
@@ -39,18 +39,14 @@ add_dependencies(libtest_module libdynloader)
 set_target_properties(libtest_module PROPERTIES PREFIX "")
 set_target_properties(libtest_module PROPERTIES COMPILE_FLAGS -DSHARED)
 
-add_executable(TestLoaderException tests/TestLoaderException.cpp ${LIBDYNLOADER_SRCS})
+add_executable(TestLoaderException tests/TestLoaderException.cpp src/LoaderException.cpp)
 add_dependencies(TestLoaderException libdynloader)
 set_target_properties(TestLoaderException PROPERTIES PREFIX "")
-
-if(CMAKE_SYSTEM_NAME MATCHES "Linux")
-  target_link_libraries(TestLoaderException dl)
-endif()
 
 add_test(TestLoaderException ${OUTPUT_PATH}/TestLoaderException)
 
 
-add_executable(TestDynLib tests/TestDynLib.cpp ${LIBDYNLOADER_SRCS})
+add_executable(TestDynLib tests/TestDynLib.cpp src/DynLib.cpp src/LoaderException.cpp)
 add_dependencies(TestDynLib libdynloader)
 set_target_properties(TestDynLib PROPERTIES PREFIX "")
 
@@ -64,7 +60,7 @@ else()
   add_test(TestDynLib ${OUTPUT_PATH}/TestDynLib ./libtest_module.so)
 endif()
 
-add_executable(TestDynLibManager tests/TestDynLibManager.cpp ${LIBDYNLOADER_SRCS})
+add_executable(TestDynLibManager tests/TestDynLibManager.cpp src/DynLibManager.cpp src/DynLib.cpp src/LoaderException.cpp)
 add_dependencies(TestDynLibManager libdynloader)
 set_target_properties(TestDynLibManager PROPERTIES PREFIX "")
 

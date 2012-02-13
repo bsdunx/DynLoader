@@ -34,7 +34,7 @@
  * @class ITest
  * @brief Test interface
  */
-class ITest : public DynLoader::DynClass
+class API_LOCAL ITest : public DynLoader::DynClass
 {
 
 public:
