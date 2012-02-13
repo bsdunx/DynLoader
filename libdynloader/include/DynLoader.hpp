@@ -119,6 +119,7 @@ class DynLibManager;
 /**
  * @class DynLoader DynLoader.hpp <DynLoader.hpp>
  * @brief Dynamic loader
+ * @todo Replace class export with a factory function which has C linkage.
  */
 class API_EXPORT DynLoader
 {

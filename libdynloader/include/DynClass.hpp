@@ -81,7 +81,7 @@ public: \
  * @param className - [in] name of the class
  */
 #define EXPORT_DYN_CLASS(className) \
-extern "C" API_EXPORT DynLoader::DynClass * Create##className() throw() \
+extern "C" API_HELPER_EXPORT DynLoader::DynClass * Create##className() throw() \
 { \
 	try { \
 		return new className(); \
