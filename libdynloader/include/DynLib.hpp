@@ -73,12 +73,6 @@ public:
 	bool Open(const PDL_CHAR * libName, bool resolveSymbols = true);
 
 	/**
-	 * @brief Get default library filename extension (platform-specific)
-	 * @return default library filename extension
-	 */
-	static const PDL_CHAR * GetDefaultExt();
-
-	/**
 	 * @brief Check if library is opened
 	 * @return true if library is opened, false otherwise
 	 */

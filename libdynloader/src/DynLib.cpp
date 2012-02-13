@@ -48,12 +48,12 @@ namespace DynLoader
 /**
  * @brief Dynamic instance builder
  */
-//typedef DynClass * (*DynBuilder)();
+typedef DynClass * (*DynBuilder)();
 
 /**
  * @brief Constructor
  */
-DynLib::DynLib() : lib_(nullptr), libName_(), lastError_(""), instances_()
+DynLib::DynLib() : lib_(nullptr), libName_(), lastError_(), instances_()
 {
 }
 
@@ -107,17 +107,14 @@ DynClass & DynLib::GetInstance(const PDL_CHAR * className)
 	
 	auto symbol = GetSymbolByName(builderName.c_str());
 	if(!symbol)
-	{
-		instances_[className] = nullptr;
 		throw LoaderException("Class `" + pdl_string(className) +
 		                      "` not found in " + libName_);
-	}
 
 	// POSIX guarantees that the size of a pointer to object is equal to 
 	// the size of a pointer to a function.
-	//DynBuilder builder = nullptr;
-	//builder = static_cast<DynBuilder>(symbol);
-	DynClass *instance(static_cast<DynClass *>(symbol));
+	DynClass *instance = static_cast<DynBuilder>(symbol)();
+	if(!instance)
+		throw LoaderException("Unable to create instance of class `" + pdl_string(className));
 
 	instances_[className] = instance;
 

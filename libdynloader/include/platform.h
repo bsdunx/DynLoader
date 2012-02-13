@@ -32,6 +32,23 @@
 // @todo Push detection of platform and toolchain to cmake
 #undef PLATFORM
 
+#ifdef PDL_SHARED
+#  ifdef _WIN32
+#    define PDL_DECL_EXPORT __declspec(dllexport)
+#    define PDL_DECL_IMPORT __declspec(dllimport)
+#  else
+#    define PDL_DECL_EXPORT
+#    define PDL_DECL_IMPORT
+#  endif
+#  ifdef PDL_EXPORT
+#    define PDL_DECL PDL_DECL_EXPORT
+#  else
+#    define PDL_DECL PDL_DECL_IMPORT
+#  endif
+#else
+#  define PDL_DECL
+#endif
+
 #if defined(_WIN32)
 /**
  * @brief Windows platform
@@ -63,18 +80,6 @@
 #      define PLATFORM 1
 #    endif // __MINGW32__
 #  endif // __GNUC__
-
-#  define PDL_DECL_EXPORT __declspec(dllexport)
-
-#  ifdef PDL_SHARED
-#    ifdef PDL_EXPORT
-#      define PDL_DECL PDL_DECL_EXPORT
-#    else
-#      define PDL_DECL __declspec(dllimport)
-#    endif
-#  else
-#    define PDL_DECL
-#  endif
 
 // character types
 #  define PDL_CHAR char

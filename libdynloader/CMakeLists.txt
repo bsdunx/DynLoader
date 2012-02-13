@@ -2,11 +2,11 @@ file(GLOB LIBDYNLOADER_SRCS src/*.cpp)
 file(GLOB LIBDYNLOADER_INCS include/*.hpp include/*.h)
 
 source_group("LibDynLoader Sources" FILES ${LIBDYNLOADER_SRCS})
-source_group("LibDynLoader Headers" FILES ${LIBDYNLOADER_INCS})
-
-add_library(libdynloader SHARED ${LIBDYNLOADER_SRCS} ${LIBDYNLOADER_INCS})
+source_group("LibDynLoader Headers" FILES ${LIBDYNLOADER_INCS} ${CMAKE_CURRENT_BINARY_DIR}/include/config.hpp)
 
 include_directories(include)
+
+add_library(libdynloader SHARED ${LIBDYNLOADER_SRCS} ${LIBDYNLOADER_INCS})
 
 if(CMAKE_SYSTEM_NAME MATCHES "Linux")
   target_link_libraries(libdynloader c dl)
@@ -37,6 +37,7 @@ install(TARGETS libdynloader libdynloader-static DESTINATION lib)
 add_library(libtest_module MODULE tests/TestClass.cpp tests/TestClass.hpp tests/TestInterface.hpp)
 add_dependencies(libtest_module libdynloader)
 set_target_properties(libtest_module PROPERTIES PREFIX "")
+set_target_properties(libtest_module PROPERTIES COMPILE_FLAGS -DPDL_SHARED)
 
 add_executable(TestLoaderException tests/TestLoaderException.cpp ${LIBDYNLOADER_SRCS})
 add_dependencies(TestLoaderException libdynloader)
@@ -58,9 +59,9 @@ if(CMAKE_SYSTEM_NAME MATCHES "Linux")
 endif()
 
 if(WIN32 AND NOT CYGWIN)
-  add_test(TestDynLib ${OUTPUT_PATH}/TestDynLib ${OUTPUT_PATH}/libtest_module.dll)
+  add_test(TestDynLib ${OUTPUT_PATH}/TestDynLib libtest_module.dll)
 else()
-  add_test(TestDynLib ${OUTPUT_PATH}/TestDynLib ${OUTPUT_PATH}/libtest_module.so)
+  add_test(TestDynLib ${OUTPUT_PATH}/TestDynLib ./libtest_module.so)
 endif()
 
 add_executable(TestDynLibManager tests/TestDynLibManager.cpp ${LIBDYNLOADER_SRCS})
@@ -86,9 +87,9 @@ target_link_libraries(TestDynLoader libdynloader)
 
 if(WIN32 AND NOT CYGWIN)
   add_test(TestDynLoader                          
-    ${OUTPUT_PATH}/TestDynLoader ${OUTPUT_PATH}/libtest_module.dll Test1 Test2)
+    ${OUTPUT_PATH}/TestDynLoader libtest_module.dll Test1 Test2)
 else()
   add_test(TestDynLoader                          
-    ${OUTPUT_PATH}/TestDynLoader ${OUTPUT_PATH}/libtest_module.so Test1 Test2)
+    ${OUTPUT_PATH}/TestDynLoader ./libtest_module.so Test1 Test2)
 endif()
 
