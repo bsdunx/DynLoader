@@ -105,6 +105,11 @@
 
 #include <platform.h>
 #include <memory>
+#include <vector>
+
+#if PLATFORM_WIN32_VC || PLATFORM_WIN32_MINGW
+#include <windows.h>
+#endif
 
 /**
  * @namespace DynLoader
@@ -114,7 +119,26 @@ namespace DynLoader
 
 /* @brief Forward declarations */
 class DynClass;
-class DynLibManager;
+
+/**
+ * @brief Constructor
+ */
+//DynLib::DynLib() : lib(nullptr), libName(), lastError_(), instances_() { }
+
+/**
+ * @brief Destructor
+ */
+//DynLib::~DynLib() throw() {	(void) Close(); }
+struct DynLibData
+{
+	pdl_string libName;
+#if PLATFORM_WIN32_VC || PLATFORM_WIN32_MINGW
+	HMODULE libHandle;
+#elif PLATFORM_POSIX
+	void * libHandle;
+#endif
+	std::vector<DynClass *> instances;
+};
 
 /**
  * @class DynLoader DynLoader.hpp <DynLoader.hpp>
@@ -124,7 +148,29 @@ class DynLibManager;
 class API_EXPORT DynLoader
 {
 
+private:
+
+	DynLoader() { }
+	~DynLoader() { }
+
+	/**
+	 * @brief Create class instance
+	 * @param libName - [in] library file name
+	 * @param className - [in] class name
+	 * @return class instance, 0 if failed
+	 */
+		
+	// Forbid copy constructor and assignment operator
+	DynLoader(const DynLoader &);
+	DynLoader & operator= (const DynLoader &);
+
+	pdl_string lastError;
+
+	std::vector<DynLibData *> libs;
+
 public:
+	DynClass * API_LOCAL GetDynInstance(const PDL_CHAR * libName, const PDL_CHAR * className);
+
 	/**
 	 * @brief Create class instance
 	 * @param libName - [in] library file name
@@ -133,49 +179,63 @@ public:
 	 * Class should be derived from DynamicClass
 	 */
 	template<typename Class>
-	Class & GetClassInstance(const PDL_CHAR * libName, const PDL_CHAR * className)
+	Class * GetClassInstance(const PDL_CHAR * libName, const PDL_CHAR * className)
 	{
-		return static_cast<Class &>(GetDynInstance(libName, className));
+		return static_cast<Class *>(GetDynInstance(libName, className));
 	}
 
 	/**
 	 * @brief Reset dynamic loader
 	 * Unload all loaded libraries and free instances
 	 */
-	void Reset() const;
+	void Reset();
+
+		/**
+	 * @brief Open library
+	 * @param libName - [in] library file name
+	 * @return true - loaded successfully, false otherwise
+	 */
+	DynLibData * OpenLib(const PDL_CHAR * libName, bool resolveSymbols = true);
+	
+	/**
+	 * @brief Get class instance
+	 * @param className - [in] class name
+	 * @return pointer to class instance
+	 */
+	DynClass * GetClassInstance(DynLibData& lib, const pdl_string& className);
+
+	/**
+	 * @brief Get last error description
+	 * @return last error description
+	 */
+	const pdl_string & GetLastError();
+
+	/**
+	 * @brief Clear last retrieved error description
+	 * 
+	 */
+	void ClearLastError();
+
+	/**
+	 * @brief Close library
+	 * @return true if closed successfully, false otherwise
+	 */
+	bool CloseLib(DynLibData& lib);
+
+	/**
+	 * @brief Get symbol by name
+	 * @param symbolName - [in] symbol name
+	 * @return pointer to symbol, 0 if not found
+	 */
+	PDL_SYMBOL GetSymbolByName(DynLibData& lib, const PDL_CHAR * symbolName);
+
+	DynLibData * GetLibInstance(const PDL_CHAR * libName);
 
 	/**
 	 * @brief Get dynamic loader instance
 	 * @return dynamic loader instance
 	 */
 	static DynLoader & Instance();
-
-	/**
-	 * @brief Destructor
-	 */
-	~DynLoader() throw();
-
-private:
-
-	/**
-	 * @brief Constructor
-	 */
-	DynLoader();
-
-	/**
-	 * @brief Create class instance
-	 * @param libName - [in] library file name
-	 * @param className - [in] class name
-	 * @return class instance, 0 if failed
-	 */
-	DynClass & API_LOCAL GetDynInstance(const PDL_CHAR * libName, const PDL_CHAR * className);
-	
-	// Forbid copy constructor and assignment operator
-	DynLoader(const DynLoader &);
-	DynLoader & operator= (const DynLoader &);
-
-	// Library manager
-	std::unique_ptr<DynLibManager> libManager_;
 
 }; // class DynLoader
 
