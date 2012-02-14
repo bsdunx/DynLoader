@@ -97,17 +97,23 @@ bool DynLib::Open(const PDL_CHAR * libName, bool resolveSymbols)
  * @param className - [in] class name
  * @return pointer to class instance
  */
-DynClass & DynLib::GetInstance(const PDL_CHAR * className)
+DynClass & DynLib::GetInstance(const pdl_string & className)
 {
-	auto const loadedInstance(instances_.find(className));
-	if(loadedInstance != instances_.cend())
-		return *(loadedInstance->second);
+	//auto const loadedInstance(instances_.find(className));
+	//if(loadedInstance != instances_.cend())
+	//	return *(loadedInstance->second);
 	
-	auto const builderName("Create" + pdl_string(className));
+	for(auto it(instances_.cbegin()), end(instances_.cend()); it != end; ++it)
+	{
+		if((*it)->GetClassName() == className)
+			return **it;
+	}
+
+	auto const builderName("Create" + className);
 	
 	auto symbol = GetSymbolByName(builderName.c_str());
 	if(!symbol)
-		throw LoaderException("Class `" + pdl_string(className) +
+		throw LoaderException("Class `" + className +
 		                      "` not found in " + libName_);
 
 	// POSIX guarantees that the size of a pointer to object is equal to 
@@ -116,11 +122,16 @@ DynClass & DynLib::GetInstance(const PDL_CHAR * className)
 	if(builder == nullptr)
 		throw LoaderException("Unable to create builder pointer for factory function" + builderName);
 
-	DynClass * instance = builder();
+	DynClass * instance = nullptr;
+	instance = builder();
 	if(instance == nullptr)
-		throw LoaderException("Unable to create instance of class `" + pdl_string(className));
+		throw LoaderException("Unable to create instance of class `" + className);
 
-	instances_[className] = instance;
+	for(auto it(instances_.begin()), end(instances_.end()); it != end; ++it)
+	{
+		instances_.push_back(instance);
+	}
+	//instances_[className] = instance;
 
 	return *instance;
 }
@@ -183,7 +194,7 @@ bool DynLib::Close()
 {
 	for(auto it(instances_.cbegin()), cend(instances_.cend()); it != cend; ++it)
 	{
-		it->second->Destroy();
+		(*it)->Destroy();
 	}
 	instances_.clear();
 

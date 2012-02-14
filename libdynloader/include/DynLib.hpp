@@ -83,7 +83,7 @@ public:
 	 * @param className - [in] class name
 	 * @return pointer to class instance
 	 */
-	DynClass & GetInstance(const PDL_CHAR * className);
+	DynClass & GetInstance(const pdl_string& className);
 
 	/**
 	 * @brief Get last error description
@@ -129,8 +129,7 @@ private:
 	pdl_string lastError_;
 
 	// Symbol map
-	std::unordered_map<pdl_string, DynClass *> instances_;
-
+	std::vector<DynClass *> instances_;
 }; // class DynLib
 
 } // namespace DynLoader

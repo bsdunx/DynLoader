@@ -1,12 +1,12 @@
 file(GLOB LIBDYNLOADER_SRCS src/*.cpp)
-file(GLOB LIBDYNLOADER_INCS include/*.hpp include/*.h)
+file(GLOB LIBDYNLOADER_INCS include/*.hpp include/*.h ${CMAKE_CURRENT_BINARY_DIR}/include/*.hpp)
 
 source_group("LibDynLoader Sources" FILES ${LIBDYNLOADER_SRCS})
-source_group("LibDynLoader Headers" FILES ${LIBDYNLOADER_INCS} ${CMAKE_CURRENT_BINARY_DIR}/include/config.hpp)
+source_group("LibDynLoader Headers" FILES ${LIBDYNLOADER_INCS})
 
-include_directories(include)
+#include_directories(include)
 
-add_library(libdynloader SHARED ${LIBDYNLOADER_SRCS})
+add_library(libdynloader SHARED ${LIBDYNLOADER_SRCS} ${LIBDYNLOADER_INCS})
 
 if(CMAKE_SYSTEM_NAME MATCHES "Linux")
   target_link_libraries(libdynloader c dl)
@@ -19,7 +19,7 @@ set_target_properties(libdynloader PROPERTIES COMPILE_FLAGS -DSHARED)
 set_target_properties(libdynloader PROPERTIES VERSION ${DynLoader_VERSION}
                                               SOVERSION ${DynLoader_VERSION_MAJOR})
 
-add_library(libdynloader-static STATIC ${LIBDYNLOADER_SRCS})
+add_library(libdynloader-static STATIC ${LIBDYNLOADER_SRCS} ${LIBDYNLOADER_INCS})
 if(CMAKE_SYSTEM_NAME MATCHES "Linux")
   target_link_libraries(libdynloader-static c dl)
 endif()
@@ -34,7 +34,7 @@ install(FILES
 
 install(TARGETS libdynloader libdynloader-static DESTINATION lib)
 
-add_library(libtest_module MODULE tests/TestClass.cpp tests/TestClass.hpp tests/TestInterface.hpp)
+add_library(libtest_module MODULE tests/TestClass.cpp tests/TestClass.hpp tests/TestInterface.hpp include/platform.h)
 add_dependencies(libtest_module libdynloader)
 set_target_properties(libtest_module PROPERTIES PREFIX "")
 
@@ -45,7 +45,7 @@ set_target_properties(TestLoaderException PROPERTIES PREFIX "")
 add_test(TestLoaderException ${OUTPUT_PATH}/TestLoaderException)
 
 
-add_executable(TestDynLib tests/TestDynLib.cpp src/DynLib.cpp src/LoaderException.cpp)
+add_executable(TestDynLib tests/TestDynLib.cpp src/DynLib.cpp src/LoaderException.cpp include/DynLib.hpp include/LoaderException.hpp include/DynClass.hpp)
 add_dependencies(TestDynLib libdynloader)
 set_target_properties(TestDynLib PROPERTIES PREFIX "")
 

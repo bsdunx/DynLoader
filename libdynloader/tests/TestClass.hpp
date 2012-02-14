@@ -25,8 +25,10 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <platform.h>
 #include <DynClass.hpp>
 #include "TestInterface.hpp"
+#include <string>
 
 /**
  * @class Test1
@@ -34,13 +36,16 @@
  */
 class API_LOCAL Test1 : public ITest
 {
+private:
+	DynLoader::pdl_string className_;
 
 public:
 	/**
 	 * @brief Test method
 	 */
+	DECLARE_DYN_CLASS_CTOR(Test1)
 	void DoSomething() throw();
-
+	DECLARE_DYN_CLASS
 };
 
 EXPORT_DYN_CLASS(Test1)
@@ -51,13 +56,16 @@ EXPORT_DYN_CLASS(Test1)
  */
 class API_LOCAL Test2 : public ITest
 {
+private:
+	DynLoader::pdl_string className_;
 
 public:
 	/**
 	 * @brief Test method
 	 */
+	DECLARE_DYN_CLASS_CTOR(Test2)
 	void DoSomething() throw();
-
+	DECLARE_DYN_CLASS
 };
 
 EXPORT_DYN_CLASS(Test2)

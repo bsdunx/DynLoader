@@ -51,7 +51,7 @@ int main(int argc, char ** argv)
 		lib1.Open("SomeDefinitelyNotExistentFile");
 		UNIT_TEST(false);
 	}
-	catch(DynLoader::LoaderException & ex)
+	catch(const DynLoader::LoaderException & ex)
 	{
 		fprintf(stderr, "Exception: %s, LastError: (%s)\n", 
 		        ex.what(), lib1.GetLastError().c_str());
@@ -68,7 +68,7 @@ int main(int argc, char ** argv)
 		lib2.Open(argv[1]);
 		UNIT_TEST(true);
 	}
-	catch(DynLoader::LoaderException & ex)
+	catch(const DynLoader::LoaderException & ex)
 	{
 		fprintf(stderr, "Exception: %s, LastError: (%s)\n", 
 		        ex.what(), lib2.GetLastError().c_str());
@@ -85,7 +85,7 @@ int main(int argc, char ** argv)
 		lib3.Open(0);
 		//UNIT_TEST(false);
 	}
-	catch(DynLoader::LoaderException & ex)
+	catch(const DynLoader::LoaderException & ex)
 	{
 		fprintf(stderr, "Exception: %s, LastError: (%s)\n", 
 		        ex.what(), lib3.GetLastError().c_str());
@@ -107,7 +107,7 @@ int main(int argc, char ** argv)
 		lib1.GetInstance("Test1");
 		UNIT_TEST(false);
 	}
-	catch(DynLoader::LoaderException & ex)
+	catch(const DynLoader::LoaderException & ex)
 	{
 		fprintf(stderr, "Exception: %s, LastError: (%s)\n", 
 		        ex.what(), lib1.GetLastError().c_str());
@@ -124,7 +124,7 @@ int main(int argc, char ** argv)
 		lib2.GetInstance("NonExistentClass");
 		UNIT_TEST(false);
 	}
-	catch(DynLoader::LoaderException & ex)
+	catch(const DynLoader::LoaderException & ex)
 	{
 		fprintf(stderr, "Exception: %s, LastError: (%s)\n", ex.what(), lib2.GetLastError().c_str());
 		lib2.ClearLastError();
@@ -141,7 +141,7 @@ int main(int argc, char ** argv)
 		lib2.GetInstance("Test2");
 		UNIT_TEST(true);
 	}
-	catch(DynLoader::LoaderException & ex)
+	catch(const DynLoader::LoaderException & ex)
 	{
 		fprintf(stderr, "Exception: %s, LastError: (%s)\n", ex.what(), lib2.GetLastError().c_str());
 		lib2.ClearLastError();
@@ -158,7 +158,7 @@ int main(int argc, char ** argv)
 		auto &class2 = lib2.GetInstance("Test1");
 		UNIT_TEST(&class1 && &class2 && &class1 == &class2);
 	}
-	catch(DynLoader::LoaderException & ex)
+	catch(const DynLoader::LoaderException & ex)
 	{
 		fprintf(stderr, "Exception: %s, LastError: (%s)\n", ex.what(), lib2.GetLastError().c_str());
 		lib2.ClearLastError();

@@ -29,6 +29,7 @@
 #define __DYNCLASS_HPP__
 
 #include <platform.h>
+#include <string>
 
 /**
  * @namespace DynLoader
@@ -48,7 +49,7 @@ public:
 	 * @brief Get class name
 	 * return class name
 	 */
-	virtual const PDL_CHAR * GetClassName() const throw() = 0;
+	virtual pdl_string & GetClassName() throw() = 0;
 
 	/**
 	 * @brief Destroy class instance
@@ -71,9 +72,11 @@ protected:
  * @param className - [in] name of the class
  * Class should be derived from DynClass
  */
-#define DECLARE_DYN_CLASS(className) \
-public: \
-	virtual const PDL_CHAR * GetClassName() const throw() { return #className; }
+#define DECLARE_DYN_CLASS \
+public: DynLoader::pdl_string & GetClassName() throw() { return this->className_; }
+
+#define DECLARE_DYN_CLASS_CTOR(className) \
+	className##() : className_(#className) { }
 
 /**
  * @def EXPORT_DYN_CLASS DynClass.hpp <DynClass.hpp>

@@ -28,8 +28,9 @@
 #ifndef __TESTINTERFACE_HPP__
 #define __TESTINTERFACE_HPP__
 
+#include <platform.h>
 #include <DynClass.hpp>
-
+#include <string>
 /**
  * @class ITest
  * @brief Test interface
@@ -46,7 +47,8 @@ public:
 	/**
 	 * @brief Declare this class dynamically loadable
 	 */
-	DECLARE_DYN_CLASS(ITest)
+	virtual DynLoader::pdl_string& GetClassName() throw() = 0;
+	//DECLARE_DYN_CLASS(ITest)
 
 };
 
