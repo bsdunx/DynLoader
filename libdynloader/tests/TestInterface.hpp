@@ -50,6 +50,10 @@ public:
 	virtual DynLoader::pdl_string& GetClassName() throw() = 0;
 	//DECLARE_DYN_CLASS(ITest)
 
+private:
+	//ITest();
+	//const ITest & operator= (const ITest &);
+
 };
 
 #endif // __TESTINTERFACE_HPP__

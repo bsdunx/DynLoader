@@ -43,9 +43,10 @@ public:
 	/**
 	 * @brief Test method
 	 */
-	DECLARE_DYN_CLASS_CTOR(Test1)
 	void DoSomething() throw();
 	DECLARE_DYN_CLASS
+//private:
+	DECLARE_DYN_CLASS_CTOR(Test1)
 };
 
 EXPORT_DYN_CLASS(Test1)

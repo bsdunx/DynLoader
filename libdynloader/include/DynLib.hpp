@@ -31,7 +31,7 @@
 
 #include <platform.h>
 #include <string>
-#include <unordered_map>
+#include <vector>
 
 #if PLATFORM_WIN32_VC || PLATFORM_WIN32_MINGW
 #include <windows.h>

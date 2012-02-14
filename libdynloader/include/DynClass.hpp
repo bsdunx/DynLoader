@@ -60,7 +60,10 @@ protected:
 	/**
 	 * @brief Destructor
 	 */
-	virtual ~DynClass() throw() { ;; }
+	virtual ~DynClass() { }
+
+//private:
+//	DynClass() { };
 
 }; // class DynClass
 
@@ -76,7 +79,7 @@ protected:
 public: DynLoader::pdl_string & GetClassName() throw() { return this->className_; }
 
 #define DECLARE_DYN_CLASS_CTOR(className) \
-	className##() : className_(#className) { }
+	className() throw() : className_(#className) { }
 
 /**
  * @def EXPORT_DYN_CLASS DynClass.hpp <DynClass.hpp>
