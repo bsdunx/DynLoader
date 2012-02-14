@@ -28,19 +28,13 @@
 #include <LoaderException.hpp>
 #include "UnitTest.hpp"
 #include <cstdio>
-
-void throwing_func()
-{
-	throw DynLoader::LoaderException("Some text");
-}
  
 int main( int argc, char ** argv )
 {
 	// Test catching DynLoader::LoaderException
 	try
 	{
-		throwing_func();
-		UNIT_TEST(false);
+		throw DynLoader::LoaderException("Some text");
 	}
 	catch(const DynLoader::LoaderException & ex)
 	{
@@ -52,6 +46,8 @@ int main( int argc, char ** argv )
 		UNIT_TEST(false);
 	}
 	
+	UNIT_TEST(true)
+
 	return 0;
 }
 

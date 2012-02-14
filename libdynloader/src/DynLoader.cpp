@@ -32,6 +32,10 @@
 
 #include <memory>
 
+#ifdef PLATFORM_POSIX
+#include <dlfcn.h>
+#endif
+
 /**
  * @namespace DynLoader
  */
@@ -81,7 +85,7 @@ DynLibData* DynLoader::OpenLib(const PDL_CHAR * libName, bool resolveSymbols)
 	if(!libName)
 		return false;
 
-	DynLibData* libData = new DynLibData;
+	DynLibData* libData = new DynLibData(libName);
 
 	libData->libHandle =
 #if PLATFORM_WIN32_VC || PLATFORM_WIN32_MINGW
@@ -207,7 +211,7 @@ PDL_SYMBOL DynLoader::GetSymbolByName(DynLibData& lib, const PDL_CHAR * symbolNa
 #if PLATFORM_WIN32_VC || PLATFORM_WIN32_MINGW
 	return reinterpret_cast<void *>(::GetProcAddress(lib.libHandle, symbolName));
 #elif PLATFORM_POSIX
-	return ::dlsym(lib_, symbolName);
+	return ::dlsym(lib.libHandle, symbolName);
 #endif
 }
 
@@ -245,7 +249,7 @@ DynLibData * DynLoader::GetLibInstance(const PDL_CHAR * libName)
 			return *it;
 	}
 
-	DynLibData * lib = new DynLibData;
+	DynLibData * lib = new DynLibData(libName);
 	if(lib == nullptr)
 		throw LoaderException("Unable to create new DynLib");
 

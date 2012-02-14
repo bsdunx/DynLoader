@@ -138,6 +138,10 @@ struct DynLibData
 	void * libHandle;
 #endif
 	std::vector<DynClass *> instances;
+
+	DynLibData(const pdl_string& libName) : libName(libName), libHandle(nullptr)
+	{
+	}
 };
 
 /**
