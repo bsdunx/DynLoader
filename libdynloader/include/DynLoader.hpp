@@ -128,10 +128,15 @@ struct DynLibData
 #elif PLATFORM_POSIX
 	void * libHandle;
 #endif
-	std::vector<DynClass *> instances;
+	std::vector<DynClass*> instances;
 
 	DynLibData(const pdl_string& libName) : libName(libName), libHandle(nullptr)
 	{
+	}
+
+	~DynLibData()
+	{
+
 	}
 };
 
@@ -145,12 +150,12 @@ class API_EXPORT DynLoader
 
 private:
 	// Forbid copy constructor and assignment operator
-	DynLoader(const DynLoader &);
-	DynLoader & operator= (const DynLoader &);
+	DynLoader(const DynLoader&);
+	DynLoader & operator= (const DynLoader&);
 
 	pdl_string lastError;
 
-	std::vector<DynLibData *> libs;
+	std::vector<DynLibData*> libs;
 
 public:
 
@@ -165,7 +170,7 @@ public:
 	 * Class should be derived from DynamicClass
 	 */
 	template<typename Class>
-	Class * GetClassInstance(const PDL_CHAR * libName, const PDL_CHAR * className)
+	Class* GetClassInstance(const PDL_CHAR* libName, const PDL_CHAR* className)
 	{
 		DynLibData* lib = nullptr;
 
@@ -187,35 +192,35 @@ public:
 	 * @param libName - [in] library file name
 	 * @return true - loaded successfully, false otherwise
 	 */
-	DynLibData * OpenLib(const PDL_CHAR * libName, bool resolveSymbols = true);
+	DynLibData * OpenLib(const PDL_CHAR* libName, bool resolveSymbols = true);
 
 	/**
 	 * @brief Close library
 	 * @return true if closed successfully, false otherwise
 	 */
-	bool CloseLib(DynLibData& lib);
+	bool CloseLib(DynLibData* lib);
 
 	/**
 	 * @brief Get class instance
 	 * @param className - [in] class name
 	 * @return pointer to class instance
 	 */
-	DynClass * GetClassInstance(DynLibData& lib, const pdl_string& className);
+	DynClass* GetClassInstance(DynLibData& lib, const pdl_string& className);
 
 	/**
 	 * @brief Get symbol by name
 	 * @param symbolName - [in] symbol name
 	 * @return pointer to symbol, 0 if not found
 	 */
-	PDL_SYMBOL GetSymbolByName(DynLibData& lib, const PDL_CHAR * symbolName);
+	PDL_SYMBOL GetSymbolByName(DynLibData& lib, const PDL_CHAR* symbolName);
 
-	DynLibData * GetLibInstance(const PDL_CHAR * libName);
+	DynLibData* GetLibInstance(const PDL_CHAR* libName);
 
 	/**
 	 * @brief Get last error description
 	 * @return last error description
 	 */
-	const pdl_string & GetLastError();
+	const pdl_string& GetLastError();
 
 	/**
 	 * @brief Clear last retrieved error description

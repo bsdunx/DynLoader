@@ -32,6 +32,8 @@
 
 #include <memory>
 
+#include <cassert>
+
 #ifdef PLATFORM_POSIX
 #include <dlfcn.h>
 #endif
@@ -67,23 +69,25 @@ DynLibData* DynLoader::OpenLib(const PDL_CHAR * libName, bool resolveSymbols)
 	if(!libName)
 		return false;
 
-	DynLibData* libData = new DynLibData(libName);
+	DynLibData* lib = new DynLibData(libName);
+	if(lib == nullptr)
+		throw LoaderException("Unable to create new DynLib");
 
-	libData->libHandle =
+	lib->libHandle =
 #if PLATFORM_WIN32_VC || PLATFORM_WIN32_MINGW
 		::LoadLibraryExA(libName, NULL, resolveSymbols ? (DWORD)0 : DONT_RESOLVE_DLL_REFERENCES);
 #elif PLATFORM_POSIX
 		::dlopen(libName, RTLD_GLOBAL | (resolveSymbols ? RTLD_NOW : RTLD_LAZY));
 #endif
 
-	if(libData)
-		libData->libName = libName;
-	else
+	if(!lib->libHandle)
 		throw LoaderException("Could not open `" + pdl_string(libName) + "`");
 
-	//libs.push_back(libData);
+	lib->libName = libName;
 
-	return libData;
+	libs.push_back(lib);
+
+	return lib;
 }
 
 /**
@@ -159,24 +163,24 @@ void DynLoader::ClearLastError()
  * @brief Close library
  * @return true if closed successfully, false otherwise
  */
-bool DynLoader::CloseLib(DynLibData& lib)
+bool DynLoader::CloseLib(DynLibData* lib)
 {
-	for(auto it(lib.instances.cbegin()), cend(lib.instances.cend()); it != cend; ++it)
+	for(auto it(lib->instances.begin()), end(lib->instances.end()); it != end; ++it)
 	{
 		(*it)->Destroy();
 	}
-	lib.instances.clear();
+	lib->instances.clear();
 
 	bool closeSuccess = true;
-	if(lib.libHandle)
+	if(lib->libHandle)
 	{
 		closeSuccess = 
 #if PLATFORM_WIN32_VC || PLATFORM_WIN32_MINGW
-				(::FreeLibrary(lib.libHandle) != FALSE);
+				(::FreeLibrary(lib->libHandle) != FALSE);
 #elif PLATFORM_POSIX
 				(::dlclose(lib.libHandle) == 0);
 #endif
-		lib.libHandle = nullptr;
+		lib->libHandle = nullptr;
 	}
 
 	if(!closeSuccess)
@@ -208,8 +212,9 @@ void DynLoader::Reset()
 	// Free all libraries
 	for(auto it(libs.begin()), end(libs.end()); it != end; ++it)
 	{
-		if(!CloseLib(**it))
+		if(!CloseLib(*it))
 			throw LoaderException("Unable to close `" + (*it)->libName);
+		//libs.erase(it);
 		delete *it;
 	}
 
@@ -239,18 +244,12 @@ DynLibData * DynLoader::GetLibInstance(const PDL_CHAR * libName)
 			return *it;
 	}
 
-	DynLibData * lib = new DynLibData(libName);
-	if(lib == nullptr)
-		throw LoaderException("Unable to create new DynLib");
-
-	lib = OpenLib(libName, true);
+	DynLibData* lib = OpenLib(libName, true);
 	if(lib == nullptr)
 	{
 		throw LoaderException("Cannot load library `" + pdl_string(libName) + 
 				"`: " + GetLastError());
 	}
-
-	libs.push_back(lib);
 
 	return lib;
 }
