@@ -1,5 +1,6 @@
 /**
  * Copyright (c) 2007-2008, Igor Semenov
+ * Copyright (c) 2010-2012, Adam Gregoire
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -49,7 +50,7 @@ public:
 	 * @brief Get class name
 	 * return class name
 	 */
-	virtual pdl_string & GetClassName() throw() = 0;
+	virtual const PDL_CHAR * GetClassName() throw() = 0;
 
 	/**
 	 * @brief Destroy class instance
@@ -62,12 +63,10 @@ protected:
 	 */
 	virtual ~DynClass() { }
 
-//private:
-//	DynClass() { };
+private:
+	//DynClass() { };
 
 }; // class DynClass
-
-} // namespace PDL
 
 /**
  * @def DECLARE_DYN_CLASS DynClass.hpp <DynClass.hpp>
@@ -75,22 +74,23 @@ protected:
  * @param className - [in] name of the class
  * Class should be derived from DynClass
  */
-#define DECLARE_DYN_CLASS \
-public: DynLoader::pdl_string & GetClassName() throw() { return this->className_; }
-
-#define DECLARE_DYN_CLASS_CTOR(className) \
-	className() throw() : className_(#className) { }
+#define DECLARE_DYN_CLASS(name) \
+private: \
+	DynLoader::pdl_string className_; \
+public: \
+	name(const DynLoader::pdl_string& className) throw() : className_(#name) { } \
+	const PDL_CHAR * GetClassName() throw() { return this->className_.c_str(); }
 
 /**
  * @def EXPORT_DYN_CLASS DynClass.hpp <DynClass.hpp>
  * @brief Export constructor for dynamically loaded class
  * @param className - [in] name of the class
  */
-#define EXPORT_DYN_CLASS(className) \
-extern "C" API_HELPER_EXPORT DynLoader::DynClass * Create##className() throw() \
+#define EXPORT_DYN_CLASS(name) \
+extern "C" API_HELPER_EXPORT DynLoader::DynClass * Create##name() throw() \
 { \
 	try { \
-		return new className(); \
+		return new name(#name); \
 	} \
 	catch(...) \
 	{ \
@@ -98,6 +98,8 @@ extern "C" API_HELPER_EXPORT DynLoader::DynClass * Create##className() throw() \
 	} \
 	return nullptr; \
 }
+
+} // namespace DynLoader
 
 #endif // __DYNCLASS_HPP__
 

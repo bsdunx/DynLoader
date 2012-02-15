@@ -47,30 +47,12 @@ namespace DynLoader
  */
 typedef DynClass * (*DynBuilder)();
 
-/**
- * @brief Get dynamic loader instance
- * @return dynamic loader instance
- */
-DynLoader & DynLoader::Instance()
+DynLoader::DynLoader() : lastError()
 {
-	static DynLoader _dynLoader;
-	return _dynLoader;
 }
 
-/**
- * @brief Create class instance
- * @param libName - [in] library file name
- * @param className - [in] class name
- * @return class instance, 0 if failed
- */
-DynClass * DynLoader::GetDynInstance(const PDL_CHAR * libName,
-                                              const PDL_CHAR * className)
+DynLoader::~DynLoader()
 {
-	DynLibData* lib = nullptr;
-	
-	lib = GetLibInstance(libName);
-
-	return GetClassInstance(*lib, className);
 }
 
 /**

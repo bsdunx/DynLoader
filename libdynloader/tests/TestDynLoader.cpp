@@ -29,7 +29,8 @@
 #include <LoaderException.hpp>
 #include "TestInterface.hpp"
 #include "UnitTest.hpp"
-#include <stdio.h>
+#include <cstdio>
+#include <iostream>
 
 int main(int argc, char ** argv)
 {
@@ -39,36 +40,36 @@ int main(int argc, char ** argv)
 		return -1;
 	}
 
-	getchar();
 	try
 	{
-		DynLoader::DynLoader & dynLoader = DynLoader::DynLoader::Instance();
+		DynLoader::DynLoader * dynLoader = new DynLoader::DynLoader;
 		UNIT_TEST(true);
 		
-		dynLoader.Reset();
+		dynLoader->Reset();
 		UNIT_TEST(true);
 	
 		for(int i = 2; i < argc; ++i)
 		{
-			auto instance = dynLoader.GetClassInstance<ITest>(argv[1], argv[i]);
+			auto instance = dynLoader->GetClassInstance<ITest>(argv[1], argv[i]);
 			instance->DoSomething();
+			std::cout << instance->GetClassName() << std::endl;
 			UNIT_TEST(true);
 		}
 		
-		dynLoader.Reset();
+		dynLoader->Reset();
 		UNIT_TEST(true);
 		
 		for(int i = 2; i < argc; ++i)
 		{
-			auto instance = dynLoader.GetClassInstance<ITest>(argv[1], argv[i]);
+			auto instance = dynLoader->GetClassInstance<ITest>(argv[1], argv[i]);
 			instance->DoSomething();
 			UNIT_TEST(true);
 		}
 
-		dynLoader.Reset();
+		dynLoader->Reset();
 		UNIT_TEST(true);
 
-		dynLoader.Reset();
+		dynLoader->Reset();
 		UNIT_TEST(true);
 	}
 	catch(DynLoader::LoaderException & ex)

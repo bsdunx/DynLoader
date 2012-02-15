@@ -47,8 +47,7 @@ public:
 	/**
 	 * @brief Declare this class dynamically loadable
 	 */
-	virtual DynLoader::pdl_string& GetClassName() throw() = 0;
-	//DECLARE_DYN_CLASS(ITest)
+	virtual const PDL_CHAR * GetClassName() throw() = 0;
 
 private:
 	//ITest();

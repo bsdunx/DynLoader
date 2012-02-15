@@ -120,15 +120,6 @@ namespace DynLoader
 /* @brief Forward declarations */
 class DynClass;
 
-/**
- * @brief Constructor
- */
-//DynLib::DynLib() : lib(nullptr), libName(), lastError_(), instances_() { }
-
-/**
- * @brief Destructor
- */
-//DynLib::~DynLib() throw() {	(void) Close(); }
 struct DynLibData
 {
 	pdl_string libName;
@@ -153,17 +144,6 @@ class API_EXPORT DynLoader
 {
 
 private:
-
-	DynLoader() { }
-	~DynLoader() { }
-
-	/**
-	 * @brief Create class instance
-	 * @param libName - [in] library file name
-	 * @param className - [in] class name
-	 * @return class instance, 0 if failed
-	 */
-		
 	// Forbid copy constructor and assignment operator
 	DynLoader(const DynLoader &);
 	DynLoader & operator= (const DynLoader &);
@@ -173,7 +153,9 @@ private:
 	std::vector<DynLibData *> libs;
 
 public:
-	DynClass * API_LOCAL GetDynInstance(const PDL_CHAR * libName, const PDL_CHAR * className);
+
+	DynLoader();
+	~DynLoader();
 
 	/**
 	 * @brief Create class instance
@@ -185,7 +167,11 @@ public:
 	template<typename Class>
 	Class * GetClassInstance(const PDL_CHAR * libName, const PDL_CHAR * className)
 	{
-		return static_cast<Class *>(GetDynInstance(libName, className));
+		DynLibData* lib = nullptr;
+
+		lib = GetLibInstance(libName);
+
+		return static_cast<Class *>(GetClassInstance(*lib, className));
 	}
 
 	/**
@@ -200,13 +186,28 @@ public:
 	 * @return true - loaded successfully, false otherwise
 	 */
 	DynLibData * OpenLib(const PDL_CHAR * libName, bool resolveSymbols = true);
-	
+
+	/**
+	 * @brief Close library
+	 * @return true if closed successfully, false otherwise
+	 */
+	bool CloseLib(DynLibData& lib);
+
 	/**
 	 * @brief Get class instance
 	 * @param className - [in] class name
 	 * @return pointer to class instance
 	 */
 	DynClass * GetClassInstance(DynLibData& lib, const pdl_string& className);
+
+	/**
+	 * @brief Get symbol by name
+	 * @param symbolName - [in] symbol name
+	 * @return pointer to symbol, 0 if not found
+	 */
+	PDL_SYMBOL GetSymbolByName(DynLibData& lib, const PDL_CHAR * symbolName);
+
+	DynLibData * GetLibInstance(const PDL_CHAR * libName);
 
 	/**
 	 * @brief Get last error description
@@ -219,27 +220,6 @@ public:
 	 * 
 	 */
 	void ClearLastError();
-
-	/**
-	 * @brief Close library
-	 * @return true if closed successfully, false otherwise
-	 */
-	bool CloseLib(DynLibData& lib);
-
-	/**
-	 * @brief Get symbol by name
-	 * @param symbolName - [in] symbol name
-	 * @return pointer to symbol, 0 if not found
-	 */
-	PDL_SYMBOL GetSymbolByName(DynLibData& lib, const PDL_CHAR * symbolName);
-
-	DynLibData * GetLibInstance(const PDL_CHAR * libName);
-
-	/**
-	 * @brief Get dynamic loader instance
-	 * @return dynamic loader instance
-	 */
-	static DynLoader & Instance();
 
 }; // class DynLoader
 

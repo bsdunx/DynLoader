@@ -36,17 +36,13 @@
  */
 class API_LOCAL Test1 : public ITest
 {
-private:
-	DynLoader::pdl_string className_;
-
 public:
 	/**
 	 * @brief Test method
 	 */
 	void DoSomething() throw();
-	DECLARE_DYN_CLASS
-//private:
-	DECLARE_DYN_CLASS_CTOR(Test1)
+
+	DECLARE_DYN_CLASS(Test1)
 };
 
 EXPORT_DYN_CLASS(Test1)
@@ -57,16 +53,13 @@ EXPORT_DYN_CLASS(Test1)
  */
 class API_LOCAL Test2 : public ITest
 {
-private:
-	DynLoader::pdl_string className_;
-
 public:
 	/**
 	 * @brief Test method
 	 */
-	DECLARE_DYN_CLASS_CTOR(Test2)
 	void DoSomething() throw();
-	DECLARE_DYN_CLASS
+
+	DECLARE_DYN_CLASS(Test2)
 };
 
 EXPORT_DYN_CLASS(Test2)
