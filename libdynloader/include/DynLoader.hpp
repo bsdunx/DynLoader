@@ -180,7 +180,9 @@ public:
 	 */
 	void Reset();
 
-		/**
+	void Destroy();
+
+	/**
 	 * @brief Open library
 	 * @param libName - [in] library file name
 	 * @return true - loaded successfully, false otherwise

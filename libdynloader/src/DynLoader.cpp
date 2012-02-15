@@ -81,6 +81,8 @@ DynLibData* DynLoader::OpenLib(const PDL_CHAR * libName, bool resolveSymbols)
 	else
 		throw LoaderException("Could not open `" + pdl_string(libName) + "`");
 
+	//libs.push_back(libData);
+
 	return libData;
 }
 
@@ -204,15 +206,21 @@ PDL_SYMBOL DynLoader::GetSymbolByName(DynLibData& lib, const PDL_CHAR * symbolNa
 void DynLoader::Reset()
 {
 	// Free all libraries
-	for(auto i(libs.cbegin()), cend(libs.cend()); i != cend; ++i)
+	for(auto it(libs.begin()), end(libs.end()); it != end; ++it)
 	{
-		if(!CloseLib(**i))
-			throw LoaderException("Unable to close `" + (*i)->libName);
-		delete *i;
+		if(!CloseLib(**it))
+			throw LoaderException("Unable to close `" + (*it)->libName);
+		delete *it;
 	}
 
 	// Clear library map
 	libs.clear();
+}
+
+void DynLoader::Destroy()
+{
+	Reset();
+	delete this;
 }
 
 /**

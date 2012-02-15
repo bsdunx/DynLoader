@@ -71,6 +71,9 @@ int main(int argc, char ** argv)
 
 		dynLoader->Reset();
 		UNIT_TEST(true);
+
+		dynLoader->Destroy();
+		UNIT_TEST(true);
 	}
 	catch(DynLoader::LoaderException & ex)
 	{
