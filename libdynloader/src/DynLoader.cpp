@@ -178,7 +178,7 @@ bool DynLoader::CloseLib(DynLibData* lib)
 #if PLATFORM_WIN32_VC || PLATFORM_WIN32_MINGW
 				(::FreeLibrary(lib->libHandle) != FALSE);
 #elif PLATFORM_POSIX
-				(::dlclose(lib.libHandle) == 0);
+				(::dlclose(lib->libHandle) == 0);
 #endif
 		lib->libHandle = nullptr;
 	}
