@@ -233,7 +233,7 @@ void DynLoader::Destroy()
  * @param libName - [in] library file name
  * @return dynamic library instance
  */
-DynLibData * DynLoader::GetLibInstance(const PDL_CHAR * libName)
+DynLibData* DynLoader::GetLibInstance(const PDL_CHAR * libName)
 {
 	if(!libName)
 		throw LoaderException("You must supply a library name");

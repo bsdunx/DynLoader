@@ -52,7 +52,6 @@ int main(int argc, char ** argv)
 		{
 			auto instance = dynLoader->GetClassInstance<ITest>(argv[1], argv[i]);
 			instance->DoSomething();
-			std::cout << instance->GetClassName() << std::endl;
 			UNIT_TEST(true);
 		}
 		
