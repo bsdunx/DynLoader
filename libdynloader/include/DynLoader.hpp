@@ -120,7 +120,7 @@ namespace DynLoader
 /* @brief Forward declarations */
 class DynClass;
 
-struct DynLibData
+struct DynLib
 {
 	pdl_string libName;
 #if PLATFORM_WIN32_VC || PLATFORM_WIN32_MINGW
@@ -130,13 +130,12 @@ struct DynLibData
 #endif
 	std::vector<DynClass*> instances;
 
-	DynLibData(const pdl_string& libName) : libName(libName), libHandle(nullptr)
+	DynLib(const pdl_string& libName) : libName(libName), libHandle(nullptr)
 	{
 	}
 
-	~DynLibData()
+	~DynLib()
 	{
-
 	}
 };
 
@@ -154,27 +153,36 @@ private:
 
 	pdl_string lastError;
 
-	std::vector<DynLibData*> libs;
+	std::vector<DynLib*> libs;
 
 	/**
 	 * @brief Open library
 	 * @param libName - [in] library file name
 	 * @return true - loaded successfully, false otherwise
 	 */
-	DynLibData* API_LOCAL OpenLib(const PDL_CHAR* libName, bool resolveSymbols = true);
+	DynLib* API_LOCAL OpenLib(const PDL_CHAR* libName, bool resolveSymbols = true);
 
 	/**
 	 * @brief Close library
 	 * @return true if closed successfully, false otherwise
 	 */
-	bool API_LOCAL CloseLib(DynLibData* lib);
+	bool API_LOCAL CloseLib(DynLib* lib);
 
 	/**
 	 * @brief Get symbol by name
 	 * @param symbolName - [in] symbol name
 	 * @return pointer to symbol, 0 if not found
 	 */
-	PDL_SYMBOL API_LOCAL GetSymbolByName(DynLibData& lib, const PDL_CHAR* symbolName);
+	PDL_SYMBOL API_LOCAL GetSymbolByName(DynLib& lib, const PDL_CHAR* symbolName);
+
+	/**
+	 * @brief Get class instance
+	 * @param className - [in] class name
+	 * @return pointer to class instance
+	 */
+	DynClass* API_LOCAL GetClassInstance(DynLib& lib, const pdl_string& className);
+
+	DynLib* API_LOCAL GetLibInstance(const PDL_CHAR* libName);
 
 public:
 	/**
@@ -193,7 +201,7 @@ public:
 	template<typename Class>
 	Class* GetClassInstance(const PDL_CHAR* libName, const PDL_CHAR* className)
 	{
-		DynLibData* lib = nullptr;
+		DynLib* lib = nullptr;
 		lib = GetLibInstance(libName);
 
 		return static_cast<Class *>(GetClassInstance(*lib, className));
@@ -210,15 +218,6 @@ public:
 	 * Resets the loader to default state and initiates object destruction
 	 */
 	void Destroy();
-
-	/**
-	 * @brief Get class instance
-	 * @param className - [in] class name
-	 * @return pointer to class instance
-	 */
-	DynClass* GetClassInstance(DynLibData& lib, const pdl_string& className);
-
-	DynLibData* GetLibInstance(const PDL_CHAR* libName);
 
 	/**
 	 * @brief Get last error description
