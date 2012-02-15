@@ -28,7 +28,6 @@
 #include <platform.h>
 #include <DynClass.hpp>
 #include "TestInterface.hpp"
-#include <string>
 
 /**
  * @class Test1
@@ -41,8 +40,6 @@ public:
 	 * @brief Test method
 	 */
 	void DoSomething() throw();
-
-	DECLARE_DYN_CLASS(Test1)
 };
 
 EXPORT_DYN_CLASS(Test1)
@@ -58,8 +55,6 @@ public:
 	 * @brief Test method
 	 */
 	void DoSomething() throw();
-
-	DECLARE_DYN_CLASS(Test2)
 };
 
 EXPORT_DYN_CLASS(Test2)

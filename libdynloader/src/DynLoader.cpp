@@ -99,8 +99,8 @@ DynClass* DynLoader::GetClassInstance(DynLib& lib, const pdl_string & className)
 {
 	for(auto it(lib.instances.cbegin()), end(lib.instances.cend()); it != end; ++it)
 	{
-		if((*it)->GetClassName() == className)
-			return *it;
+		if((*it)->className == className)
+			return (*it)->instance;
 	}
 
 	auto const builderName("Create" + className);
@@ -116,14 +116,14 @@ DynClass* DynLoader::GetClassInstance(DynLib& lib, const pdl_string & className)
 	if(builder == nullptr)
 		throw LoaderException("Unable to create builder pointer for factory function" + builderName);
 
-	DynClass* instance = nullptr;
-	instance = builder();
-	if(instance == nullptr)
+	DynClassInfo* classInfo = new DynClassInfo;
+	classInfo->instance = builder();
+	if(classInfo->instance == nullptr)
 		throw LoaderException("Unable to create instance of class `" + className);
 
-	lib.instances.push_back(instance);
+	lib.instances.push_back(classInfo);
 
-	return instance;
+	return classInfo->instance;
 }
 
 /**
@@ -167,7 +167,8 @@ bool DynLoader::CloseLib(DynLib* lib)
 {
 	for(auto it(lib->instances.begin()), end(lib->instances.end()); it != end; ++it)
 	{
-		(*it)->Destroy();
+		(*it)->instance->Destroy();
+		delete *it;
 	}
 	lib->instances.clear();
 

@@ -120,6 +120,12 @@ namespace DynLoader
 /* @brief Forward declarations */
 class DynClass;
 
+struct DynClassInfo
+{
+	pdl_string className;
+	DynClass* instance;
+};
+
 struct DynLib
 {
 	pdl_string libName;
@@ -128,7 +134,7 @@ struct DynLib
 #elif PLATFORM_POSIX
 	void * libHandle;
 #endif
-	std::vector<DynClass*> instances;
+	std::vector<DynClassInfo*> instances;
 
 	DynLib(const pdl_string& libName) : libName(libName), libHandle(nullptr)
 	{
@@ -227,7 +233,6 @@ public:
 
 	/**
 	 * @brief Clear last retrieved error description
-	 * 
 	 */
 	void ClearLastError();
 

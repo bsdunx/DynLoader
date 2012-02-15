@@ -30,7 +30,7 @@
 
 #include <platform.h>
 #include <DynClass.hpp>
-#include <string>
+
 /**
  * @class ITest
  * @brief Test interface
@@ -43,16 +43,6 @@ public:
 	 * @brief Test method
 	 */
 	virtual void DoSomething() throw() = 0;
-
-	/**
-	 * @brief Declare this class dynamically loadable
-	 */
-	virtual const PDL_CHAR * GetClassName() throw() = 0;
-
-private:
-	//ITest();
-	//const ITest & operator= (const ITest &);
-
 };
 
 #endif // __TESTINTERFACE_HPP__

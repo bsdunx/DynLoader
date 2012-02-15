@@ -30,7 +30,6 @@
 #define __DYNCLASS_HPP__
 
 #include <platform.h>
-#include <string>
 
 /**
  * @namespace DynLoader
@@ -47,12 +46,6 @@ class API_LOCAL DynClass
 
 public:
 	/**
-	 * @brief Get class name
-	 * return class name
-	 */
-	virtual const PDL_CHAR * GetClassName() throw() = 0;
-
-	/**
 	 * @brief Destroy class instance
 	 */
 	void Destroy() throw() { delete this; }
@@ -63,23 +56,7 @@ protected:
 	 */
 	virtual ~DynClass() { }
 
-private:
-	//DynClass() { };
-
 }; // class DynClass
-
-/**
- * @def DECLARE_DYN_CLASS DynClass.hpp <DynClass.hpp>
- * @brief Declare dynamically loaded class
- * @param className - [in] name of the class
- * Class should be derived from DynClass
- */
-#define DECLARE_DYN_CLASS(name) \
-private: \
-	DynLoader::pdl_string className_; \
-public: \
-	name(const DynLoader::pdl_string& className) throw() : className_(#name) { } \
-	const PDL_CHAR * GetClassName() throw() { return this->className_.c_str(); }
 
 /**
  * @def EXPORT_DYN_CLASS DynClass.hpp <DynClass.hpp>
@@ -90,7 +67,7 @@ public: \
 extern "C" API_HELPER_EXPORT DynLoader::DynClass * Create##name() throw() \
 { \
 	try { \
-		return new name(#name); \
+		return new name; \
 	} \
 	catch(...) \
 	{ \
