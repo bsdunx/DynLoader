@@ -133,10 +133,10 @@ DynClass* DynLoader::GetClassInstance(DynLib& lib, const pdl_string & className)
 const pdl_string& DynLoader::GetLastError()
 {
 #if PLATFORM_WIN32_VC || PLATFORM_WIN32_MINGW
-	LPSTR lpMsgBuf = NULL;
+	LPSTR lpMsgBuf = nullptr;
 	const DWORD res =
 		::FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER|FORMAT_MESSAGE_FROM_SYSTEM|FORMAT_MESSAGE_IGNORE_INSERTS,
-				NULL, ::GetLastError(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+				nullptr, ::GetLastError(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
 				lpMsgBuf, 0, nullptr);
 	if(res != 0)
 	{

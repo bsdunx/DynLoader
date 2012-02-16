@@ -177,18 +177,29 @@ private:
 	/**
 	 * @brief Get symbol by name
 	 * @param symbolName - [in] symbol name
-	 * @return pointer to symbol, 0 if not found
+	 * @return pointer to symbol, nullptr if not found
 	 */
 	PDL_SYMBOL API_LOCAL GetSymbolByName(DynLib& lib, const PDL_CHAR* symbolName);
 
 	/**
 	 * @brief Get class instance
+	 * @param lib - [in] reference a DynLib instance
 	 * @param className - [in] class name
-	 * @return pointer to class instance
+	 * @return pointer to DynClass instance
 	 */
 	DynClass* API_LOCAL GetClassInstance(DynLib& lib, const pdl_string& className);
 
+	/**
+	 * @brief Get library instance
+	 * @param libName - [in] library name
+	 * @return pointer to DynLib instance
+	 */
 	DynLib* API_LOCAL GetLibInstance(const PDL_CHAR* libName);
+
+	/**
+	 * @brief Clear last retrieved error description
+	 */
+	void API_LOCAL ClearLastError();
 
 public:
 	/**
@@ -230,11 +241,6 @@ public:
 	 * @return last error description
 	 */
 	const pdl_string& GetLastError();
-
-	/**
-	 * @brief Clear last retrieved error description
-	 */
-	void ClearLastError();
 
 }; // class DynLoader
 
