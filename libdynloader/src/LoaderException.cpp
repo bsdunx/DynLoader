@@ -40,7 +40,7 @@ namespace DynLoader
  * @brief Constructor
  * @param text - [in] exception description
  */
-LoaderException::LoaderException(const pdl_string & text) : text_(text)
+LoaderException::LoaderException(const dyn_string& text) : text(text)
 {
 }
 	
@@ -57,7 +57,7 @@ LoaderException::~LoaderException() throw()
  */
 const char * LoaderException::what() const throw()
 {
-	return text_.c_str();
+	return text.c_str();
 }
 
 } // namespace DynLoader

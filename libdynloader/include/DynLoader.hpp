@@ -120,29 +120,25 @@ namespace DynLoader
 /* @brief Forward declarations */
 class DynClass;
 
+/* @brief DynClassInfo structure */
 struct DynClassInfo
 {
-	pdl_string className;
+	dyn_string className;
 	DynClass* instance;
 };
 
+/* @brief DynLib structure */
 struct DynLib
 {
-	pdl_string libName;
-#if PLATFORM_WIN32_VC || PLATFORM_WIN32_MINGW
-	HMODULE libHandle;
-#elif PLATFORM_POSIX
-	void * libHandle;
-#endif
+	dyn_string libName;
+	DYN_HANDLE libHandle;
 	std::vector<DynClassInfo*> instances;
 
-	DynLib(const pdl_string& libName) : libName(libName), libHandle(nullptr)
-	{
-	}
+	DynLib(const dyn_string& libName) : 
+			libName(libName), libHandle(nullptr), instances()
+	{ }
 
-	~DynLib()
-	{
-	}
+	~DynLib() { }
 };
 
 /**
@@ -155,9 +151,9 @@ class API_EXPORT DynLoader
 private:
 	// Forbid copy constructor and assignment operator
 	DynLoader(const DynLoader&);
-	DynLoader & operator= (const DynLoader&);
+	DynLoader& operator=(const DynLoader&);
 
-	pdl_string lastError;
+	dyn_string lastError;
 
 	std::vector<DynLib*> libs;
 
@@ -166,7 +162,7 @@ private:
 	 * @param libName - [in] library file name
 	 * @return true - loaded successfully, false otherwise
 	 */
-	DynLib* API_LOCAL OpenLib(const PDL_CHAR* libName, bool resolveSymbols = true);
+	DynLib* API_LOCAL OpenLib(const DYN_CHAR* libName, bool resolveSymbols = true);
 
 	/**
 	 * @brief Close library
@@ -179,7 +175,7 @@ private:
 	 * @param symbolName - [in] symbol name
 	 * @return pointer to symbol, nullptr if not found
 	 */
-	PDL_SYMBOL API_LOCAL GetSymbolByName(DynLib& lib, const PDL_CHAR* symbolName);
+	DYN_SYMBOL API_LOCAL GetSymbolByName(DynLib& lib, const DYN_CHAR* symbolName);
 
 	/**
 	 * @brief Get class instance
@@ -187,19 +183,14 @@ private:
 	 * @param className - [in] class name
 	 * @return pointer to DynClass instance
 	 */
-	DynClass* API_LOCAL GetClassInstance(DynLib& lib, const pdl_string& className);
+	DynClass* API_LOCAL GetClassInstance(DynLib& lib, const dyn_string& className);
 
 	/**
 	 * @brief Get library instance
 	 * @param libName - [in] library name
 	 * @return pointer to DynLib instance
 	 */
-	DynLib* API_LOCAL GetLibInstance(const PDL_CHAR* libName);
-
-	/**
-	 * @brief Clear last retrieved error description
-	 */
-	void API_LOCAL ClearLastError();
+	DynLib* API_LOCAL GetLibInstance(const DYN_CHAR* libName);
 
 public:
 	/**
@@ -216,12 +207,12 @@ public:
 	 * Class should be derived from DynClass
 	 */
 	template<typename Class>
-	Class* GetClassInstance(const PDL_CHAR* libName, const PDL_CHAR* className)
+	Class* GetClassInstance(const DYN_CHAR* libName, const DYN_CHAR* className)
 	{
 		DynLib* lib = nullptr;
 		lib = GetLibInstance(libName);
 
-		return static_cast<Class *>(GetClassInstance(*lib, className));
+		return static_cast<Class*>(GetClassInstance(*lib, className));
 	}
 
 	/**
@@ -240,7 +231,7 @@ public:
 	 * @brief Get last error description
 	 * @return last error description
 	 */
-	const pdl_string& GetLastError();
+	const dyn_string& GetLastError();
 
 }; // class DynLoader
 

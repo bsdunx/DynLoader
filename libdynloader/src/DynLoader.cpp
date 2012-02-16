@@ -55,6 +55,7 @@ DynLoader::DynLoader() : lastError()
 
 DynLoader::~DynLoader()
 {
+	Reset();
 }
 
 /**
@@ -64,7 +65,7 @@ DynLoader::~DynLoader()
  *
  * @todo Add path alteration for windows.
  */
-DynLib* DynLoader::OpenLib(const PDL_CHAR * libName, bool resolveSymbols)
+DynLib* DynLoader::OpenLib(const DYN_CHAR * libName, bool resolveSymbols)
 {
 	if(!libName)
 		return false;
@@ -81,7 +82,7 @@ DynLib* DynLoader::OpenLib(const PDL_CHAR * libName, bool resolveSymbols)
 #endif
 
 	if(!lib->libHandle)
-		throw LoaderException("Could not open `" + pdl_string(libName) + "`");
+		throw LoaderException("Could not open `" + dyn_string(libName) + "`");
 
 	lib->libName = libName;
 
@@ -92,10 +93,11 @@ DynLib* DynLoader::OpenLib(const PDL_CHAR * libName, bool resolveSymbols)
 
 /**
  * @brief Get class instance from an instanced library
+ * @param lib - [in] dynamic library instance
  * @param className - [in] class name
  * @return pointer to class instance
  */
-DynClass* DynLoader::GetClassInstance(DynLib& lib, const pdl_string & className)
+DynClass* DynLoader::GetClassInstance(DynLib& lib, const dyn_string& className)
 {
 	for(auto it(lib.instances.cbegin()), end(lib.instances.cend()); it != end; ++it)
 	{
@@ -130,8 +132,10 @@ DynClass* DynLoader::GetClassInstance(DynLib& lib, const pdl_string & className)
  * @brief Get last error description
  * @return last error description
  */
-const pdl_string& DynLoader::GetLastError()
+const dyn_string& DynLoader::GetLastError()
 {
+	lastError.clear();
+
 #if PLATFORM_WIN32_VC || PLATFORM_WIN32_MINGW
 	LPSTR lpMsgBuf = nullptr;
 	const DWORD res =
@@ -146,17 +150,10 @@ const pdl_string& DynLoader::GetLastError()
 #elif PLATFORM_POSIX
 	const char* err = ::dlerror();
 	if(err != nullptr)
-		lastError.assign(err);
+		last
+		Error.assign(err);
 #endif
 	return lastError;
-}
-
-/**
- * @brief Clear last retrieved error description
- */
-void DynLoader::ClearLastError()
-{
-	lastError.clear();
 }
 
 /**
@@ -195,7 +192,7 @@ bool DynLoader::CloseLib(DynLib* lib)
  * @param symbolName - [in] symbol name
  * @return pointer to symbol, 0 if not found
  */
-PDL_SYMBOL DynLoader::GetSymbolByName(DynLib& lib, const PDL_CHAR * symbolName)
+DYN_SYMBOL DynLoader::GetSymbolByName(DynLib& lib, const DYN_CHAR * symbolName)
 {
 #if PLATFORM_WIN32_VC || PLATFORM_WIN32_MINGW
 	return reinterpret_cast<void *>(::GetProcAddress(lib.libHandle, symbolName));
@@ -219,12 +216,11 @@ void DynLoader::Reset()
 	}
 
 	// Clear library map
-	libs.clear();
+	//libs.clear();
 }
 
 void DynLoader::Destroy()
 {
-	Reset();
 	delete this;
 }
 
@@ -233,21 +229,21 @@ void DynLoader::Destroy()
  * @param libName - [in] library file name
  * @return dynamic library instance
  */
-DynLib* DynLoader::GetLibInstance(const PDL_CHAR * libName)
+DynLib* DynLoader::GetLibInstance(const DYN_CHAR * libName)
 {
 	if(!libName)
 		throw LoaderException("You must supply a library name");
 
 	for(auto it(libs.cbegin()), end(libs.cend()); it != end; ++it)
 	{
-		if((*it)->libName == pdl_string(libName))
+		if((*it)->libName == dyn_string(libName))
 			return *it;
 	}
 
 	DynLib* lib = OpenLib(libName, true);
 	if(lib == nullptr)
 	{
-		throw LoaderException("Cannot load library `" + pdl_string(libName) + 
+		throw LoaderException("Cannot load library `" + dyn_string(libName) + 
 				"`: " + GetLastError());
 	}
 

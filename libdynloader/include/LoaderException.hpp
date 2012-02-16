@@ -51,7 +51,7 @@ public:
 	 * @brief Constructor
 	 * @param text - [in] exception description
 	 */
-	LoaderException(const pdl_string & text);
+	LoaderException(const dyn_string& text);
 	
 	/**
 	 * @brief Destructor
@@ -66,7 +66,7 @@ public:
 
 private:
 	// Exception description
-	pdl_string text_;
+	dyn_string text;
 
 }; // class LoaderException
 

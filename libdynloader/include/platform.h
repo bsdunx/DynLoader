@@ -216,10 +216,10 @@
 #  endif // __GNUC__
 
 // character types
-#  define PDL_CHAR char
-#  define PDL_WCHAR wchar_t
+#  define DYN_CHAR char
 
-#  define PDL_SYMBOL void *
+#  define DYN_SYMBOL void *
+#  define DYN_HANDLE HMODULE
 
 #elif defined(unix) || defined(__unix__)
 /**
@@ -230,9 +230,10 @@
 #  define PLATFORM 1
 
 // Char types
-#  define PDL_CHAR char
+#  define DYN_CHAR char
 
-#  define PDL_SYMBOL void *
+#  define DYN_SYMBOL void *
+#  define DYN_HANDLE void *
 
 #  define INVALID_HANDLE_VALUE NULL // To keep things more consistent in init lists
 
@@ -249,7 +250,7 @@
 
 namespace DynLoader
 {
-	typedef std::basic_string<PDL_CHAR> pdl_string;
+	typedef std::basic_string<DYN_CHAR> dyn_string;
 }
 
 #endif // __PLATFORM_H__

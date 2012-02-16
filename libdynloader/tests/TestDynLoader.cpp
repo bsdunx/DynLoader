@@ -25,14 +25,15 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <cstdio>
+
+#include "UnitTest.hpp"
+
 #include <DynLoader.hpp>
 #include <LoaderException.hpp>
 #include "TestInterface.hpp"
-#include "UnitTest.hpp"
-#include <cstdio>
-#include <iostream>
 
-int main(int argc, char ** argv)
+int main(int argc, char** argv)
 {
 	if(argc < 2)
 	{
@@ -42,7 +43,7 @@ int main(int argc, char ** argv)
 
 	try
 	{
-		DynLoader::DynLoader * dynLoader = new DynLoader::DynLoader;
+		DynLoader::DynLoader* dynLoader = new DynLoader::DynLoader;
 		UNIT_TEST(true);
 		
 		dynLoader->Reset();
