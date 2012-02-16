@@ -150,9 +150,9 @@ const dyn_string& DynLoader::GetLastError()
 #elif PLATFORM_POSIX
 	const char* err = ::dlerror();
 	if(err != nullptr)
-		last
-		Error.assign(err);
+		lastError.assign(err);
 #endif
+
 	return lastError;
 }
 
