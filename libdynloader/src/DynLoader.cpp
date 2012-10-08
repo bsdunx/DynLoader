@@ -110,7 +110,9 @@ DynClass* DynLoader::GetClassInstance(DynLib& lib, const dyn_string& className)
 	// POSIX guarantees that the size of a pointer to object is equal to 
 	// the size of a pointer to a function. On NT systems this is also a safe 
 	// assumtion.
-	std::function<DynClass*()> builder(std::bind(reinterpret_cast<DynClass*(*)()>(GetSymbolByName(lib, builderName.c_str()))));
+	std::function<DynClass*()> builder(std::bind(
+			reinterpret_cast<DynClass*(*)()>(
+			GetSymbolByName(lib, builderName.c_str()))));
 	if(builder == nullptr)
 		throw LoaderException("Factory builder `" + builderName + "` for Class `" + className +
 		                      "` not found in " + lib.name);
