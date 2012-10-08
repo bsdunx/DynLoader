@@ -34,6 +34,7 @@
 
 #include <memory>
 #include <algorithm>
+#include <functional>
 
 #include <cassert>
 
@@ -46,11 +47,6 @@
  */
 namespace DynLoader
 {
-
-/**
- * @brief Dynamic instance builder
- */
-typedef DynClass* (*DynBuilder)();
 
 DynLoader::DynLoader() : lastError()
 {
@@ -109,23 +105,19 @@ DynClass* DynLoader::GetClassInstance(DynLib& lib, const dyn_string& className)
 			return *it;
 	}
 
-	auto const builderName("Create" + className);
-	
-	auto symbol = GetSymbolByName(lib, builderName.c_str());
-	if(!symbol)
-		throw LoaderException("Class `" + className +
-		                      "` not found in " + lib.name);
+	dyn_string builderName("Create" + className);
 
 	// POSIX guarantees that the size of a pointer to object is equal to 
 	// the size of a pointer to a function. On NT systems this is also a safe 
 	// assumtion.
-	DynBuilder builder = reinterpret_cast<DynBuilder>(symbol);
+	std::function<DynClass*()> builder(std::bind(reinterpret_cast<DynClass*(*)()>(GetSymbolByName(lib, builderName.c_str()))));
 	if(builder == nullptr)
-		throw LoaderException("Unable to create builder for factory function " + builderName);
+		throw LoaderException("Factory builder `" + builderName + "` for Class `" + className +
+		                      "` not found in " + lib.name);
 
 	DynClass* instance = builder();
 	if(instance == nullptr)
-		throw LoaderException("Unable to create instance of class `" + className);
+		throw LoaderException("Unable to create instance of class `" + className + "`");
 	
 	lib.instances.push_back(instance);
 
