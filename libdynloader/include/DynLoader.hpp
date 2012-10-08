@@ -68,11 +68,11 @@
  * @author Igor Semenov <igor@progz.ru>
  * @author Adam Gregoire <bsdunx@gmail.com>
  *
- * @version 0.0.1
+ * @version 0.10.0
  *
  * @par License:
  * Copyright (c) 2007-2008, Igor Semenov @n
- * Copyright (c) 2010-2011, Adam Gregoire @n
+ * Copyright (c) 2010-2012, Adam Gregoire @n
  *
  * All rights reserved. @n
  * @n
@@ -104,6 +104,7 @@
 #define __DYNLOADER_HPP__
 
 #include <platform.h>
+
 #include <memory>
 #include <vector>
 
@@ -120,25 +121,47 @@ namespace DynLoader
 /* @brief Forward declarations */
 class DynClass;
 
-/* @brief DynClassInfo structure */
-struct DynClassInfo
-{
-	dyn_string className;
-	DynClass* instance;
-};
-
 /* @brief DynLib structure */
 struct DynLib
 {
-	dyn_string libName;
-	DYN_HANDLE libHandle;
-	std::vector<DynClassInfo*> instances;
+	dyn_string name;
+	DYN_HANDLE handle;
+	std::vector<DynClass*> instances;
 
 	DynLib(const dyn_string& libName) : 
-			libName(libName), libHandle(nullptr), instances()
+			name(libName), handle(nullptr)
 	{ }
 
-	~DynLib() { }
+	~DynLib()
+	{
+		for(auto it(instances.cbegin()), end(instances.cend()); it != end; ++it)
+		{
+			delete &*it;
+		}
+
+		CloseLib();
+	}
+
+	bool CloseLib()
+	{
+		bool closeSuccess = true;
+		if(handle)
+		{
+			closeSuccess = 
+#if PLATFORM_WIN32_VC || PLATFORM_WIN32_MINGW
+				(::FreeLibrary(handle) != FALSE);
+#elif PLATFORM_POSIX
+				(::dlclose(lib.handle) == 0);
+#endif
+			handle = nullptr;
+		}
+
+		if(!closeSuccess)
+			GetLastError();
+
+		return closeSuccess;
+	}
+
 };
 
 /**
@@ -162,13 +185,13 @@ private:
 	 * @param libName - [in] library file name
 	 * @return true - loaded successfully, false otherwise
 	 */
-	DynLib* API_LOCAL OpenLib(const DYN_CHAR* libName, bool resolveSymbols = true);
+	DynLib* API_LOCAL OpenLib(const dyn_string& libName, bool resolveSymbols = true);
 
 	/**
 	 * @brief Close library
-	 * @return true if closed successfully, false otherwise
+	 * @param lib - [in] reference to dynamic library instance
 	 */
-	bool API_LOCAL CloseLib(DynLib* lib);
+	void API_LOCAL CloseLib(DynLib& lib);
 
 	/**
 	 * @brief Get symbol by name
@@ -190,7 +213,7 @@ private:
 	 * @param libName - [in] library name
 	 * @return pointer to DynLib instance
 	 */
-	DynLib* API_LOCAL GetLibInstance(const DYN_CHAR* libName);
+	DynLib* API_LOCAL GetLibInstance(const dyn_string& libName);
 
 public:
 	/**
@@ -207,22 +230,21 @@ public:
 	 * Class should be derived from DynClass
 	 */
 	template<typename Class>
-	Class* GetClassInstance(const DYN_CHAR* libName, const DYN_CHAR* className)
+	Class* GetClassInstance(const dyn_string& libName, const dyn_string& className)
 	{
-		DynLib* lib = nullptr;
-		lib = GetLibInstance(libName);
+		DynLib* lib = GetLibInstance(libName);
 
-		return static_cast<Class*>(GetClassInstance(*lib, className));
+		return lib ? static_cast<Class*>(GetClassInstance(*lib, className)) : nullptr;
 	}
 
 	/**
-	 * @brief Reset dynamic loader
+	 * @brief Reset the dynamic loader
 	 * Frees all class instances and unloads all libraries
 	 */
 	void Reset();
 
 	/**
-	 * @brief Destroy dynamic loader
+	 * @brief Destroy the dynamic loader
 	 * Resets the loader to default state and initiates object destruction
 	 */
 	void Destroy();

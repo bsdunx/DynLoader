@@ -49,12 +49,16 @@ public:
 	 * @brief Destroy class instance
 	 */
 	void Destroy() throw() { delete this; }
+	const dyn_string& GetName() { return name; }
 
 protected:
 	/**
 	 * @brief Destructor
 	 */
 	virtual ~DynClass() { }
+
+private:
+	dyn_string name;
 
 }; // class DynClass
 
@@ -64,9 +68,10 @@ protected:
  * @param className - [in] name of the class
  */
 #define EXPORT_DYN_CLASS(name) \
-extern "C" API_HELPER_EXPORT DynLoader::DynClass * Create##name() throw() \
+extern "C" API_HELPER_EXPORT DynLoader::DynClass* Create##name() throw() \
 { \
-	try { \
+	try \
+	{ \
 		return new name; \
 	} \
 	catch(...) \
@@ -79,4 +84,3 @@ extern "C" API_HELPER_EXPORT DynLoader::DynClass * Create##name() throw() \
 } // namespace DynLoader
 
 #endif // __DYNCLASS_HPP__
-

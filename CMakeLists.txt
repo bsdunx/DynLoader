@@ -33,10 +33,8 @@ if(NOT CMAKE_BUILD_TYPE)
     FORCE)
 endif()
 
-if(WIN32)
-  if(MSVC)
+if(WIN32 AND MSVC)
     set(CMAKE_BUILD_ON_VISUAL_STUDIO 1)
-  endif()
 endif()
 
 if(CMAKE_COMPILER_IS_GNUCXX MATCHES "1")
