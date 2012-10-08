@@ -169,7 +169,14 @@ const dyn_string& DynLoader::GetLastError()
  */
 void DynLoader::CloseLib(DynLib& lib)
 {
-	delete &lib;
+	for(auto begin(libs.begin()), end(libs.end()); begin != end; ++begin)
+	{
+		if(*begin == &lib)
+		{
+			libs.erase(begin);
+			delete &lib;
+		}
+	}
 }
 
 /**
