@@ -105,6 +105,9 @@
 
 #include <platform.h>
 
+#include "DynClass.hpp"
+#include "LoaderException.hpp"
+
 #include <memory>
 #include <vector>
 
@@ -118,9 +121,6 @@
 namespace DynLoader
 {
 
-/* @brief Forward declarations */
-class DynClass;
-
 /* @brief DynLib structure */
 struct DynLib
 {
@@ -128,22 +128,27 @@ struct DynLib
 	DYN_HANDLE handle;
 	std::vector<DynClass*> instances;
 
-	DynLib(const dyn_string& libName) : 
+	DynLib(const dyn_string& libName, bool resolveSymbols) : 
 			name(libName), handle(nullptr)
-	{ }
+	{
+		handle =
+#if PLATFORM_WIN32_VC || PLATFORM_WIN32_MINGW
+			::LoadLibraryExA(libName.c_str(), NULL, resolveSymbols ? (DWORD)0 : DONT_RESOLVE_DLL_REFERENCES);
+#elif PLATFORM_POSIX
+			::dlopen(libName, RTLD_GLOBAL | (resolveSymbols ? RTLD_NOW : RTLD_LAZY));
+#endif
+
+		if(handle == nullptr)
+			throw LoaderException("Could not open `" + libName + "`");
+	}
 
 	~DynLib()
 	{
 		for(auto it(instances.cbegin()), end(instances.cend()); it != end; ++it)
 		{
-			delete &*it;
+			(*it)->Destroy();
 		}
 
-		CloseLib();
-	}
-
-	bool CloseLib()
-	{
 		bool closeSuccess = true;
 		if(handle)
 		{
@@ -158,10 +163,7 @@ struct DynLib
 
 		if(!closeSuccess)
 			GetLastError();
-
-		return closeSuccess;
 	}
-
 };
 
 /**
@@ -208,13 +210,6 @@ private:
 	 */
 	DynClass* API_LOCAL GetClassInstance(DynLib& lib, const dyn_string& className);
 
-	/**
-	 * @brief Get library instance
-	 * @param libName - [in] library name
-	 * @return pointer to DynLib instance
-	 */
-	DynLib* API_LOCAL GetLibInstance(const dyn_string& libName);
-
 public:
 	/**
 	 * @brief Default constructor and destructor
@@ -232,7 +227,7 @@ public:
 	template<typename Class>
 	Class* GetClassInstance(const dyn_string& libName, const dyn_string& className)
 	{
-		DynLib* lib = GetLibInstance(libName);
+		DynLib* lib = OpenLib(libName);
 
 		return lib ? static_cast<Class*>(GetClassInstance(*lib, className)) : nullptr;
 	}

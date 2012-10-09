@@ -72,21 +72,8 @@ DynLib* DynLoader::OpenLib(const dyn_string& libName, bool resolveSymbols)
 			return *it;
 	}
 
-	DynLib* lib = new DynLib(libName);
-	if(lib == nullptr)
-		throw LoaderException("Unable to create new DynLib");
-
-	lib->handle =
-#if PLATFORM_WIN32_VC || PLATFORM_WIN32_MINGW
-		::LoadLibraryExA(libName.c_str(), NULL, resolveSymbols ? (DWORD)0 : DONT_RESOLVE_DLL_REFERENCES);
-#elif PLATFORM_POSIX
-		::dlopen(libName, RTLD_GLOBAL | (resolveSymbols ? RTLD_NOW : RTLD_LAZY));
-#endif
-
-	if(!lib->handle)
-		throw LoaderException("Could not open `" + libName + "`");
-
-	lib->name = libName;
+	DynLib* lib = new DynLib(libName, resolveSymbols);
+	libs.push_back(lib);
 
 	return lib;
 }
@@ -208,24 +195,6 @@ void DynLoader::Reset()
 void DynLoader::Destroy()
 {
 	delete this;
-}
-
-/**
- * @brief Get dynamic library instance
- * Returns an instance to a library, if the library is not loaded it is opened
- * @param libName - [in] library file name
- * @return dynamic library instance
- */
-DynLib* DynLoader::GetLibInstance(const dyn_string& libName)
-{
-	DynLib* lib = OpenLib(libName, true);
-	if(lib == nullptr)
-	{
-		throw LoaderException("Cannot load library `" + libName + 
-				"`: " + GetLastError());
-	}
-
-	return lib;
 }
 
 } // namespace DynLoader
