@@ -24,9 +24,9 @@
  * class ITest : public DynLoader::DynClass
  * {
  * public:
- *	/// Class functionality
+ *	// Class functionality
  *	virtual void DoSomething() throw() = 0;
- *	/// Declare this class as dynamically loaded
+ *	// Declare this class as dynamically loaded
  *	DECLARE_DYN_CLASS(ITest)
  * };
  * @endcode
@@ -36,7 +36,7 @@
  * class TestClass1 : public ITest
  * {
  * public:
- *	/// Class functionality
+ *	// Class functionality
  * 	void DoSomething() throw()
  * 	{
  * 		// Do something
@@ -158,11 +158,11 @@ struct DynLib
 #elif PLATFORM_POSIX
 				(::dlclose(lib.handle) == 0);
 #endif
+			if(!closeSuccess)
+				throw LoaderException("Unable to close library: Error `" + GetLastError() + "`");
+			
 			handle = nullptr;
 		}
-
-		if(!closeSuccess)
-			GetLastError();
 	}
 };
 
