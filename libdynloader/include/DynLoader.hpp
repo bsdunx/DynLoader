@@ -113,6 +113,8 @@
 
 #if PLATFORM_WIN32_VC || PLATFORM_WIN32_MINGW
 #include <windows.h>
+#elif PLATFORM_POSIX
+#include <dlfcn.h>
 #endif
 
 /**
@@ -121,50 +123,8 @@
 namespace DynLoader
 {
 
-/* @brief DynLib structure */
-struct DynLib
-{
-	dyn_string name;
-	DYN_HANDLE handle;
-	std::vector<DynClass*> instances;
-
-	DynLib(const dyn_string& libName, bool resolveSymbols) : 
-			name(libName), handle(nullptr)
-	{
-		handle =
-#if PLATFORM_WIN32_VC || PLATFORM_WIN32_MINGW
-			::LoadLibraryExA(libName.c_str(), NULL, resolveSymbols ? (DWORD)0 : DONT_RESOLVE_DLL_REFERENCES);
-#elif PLATFORM_POSIX
-			::dlopen(libName, RTLD_GLOBAL | (resolveSymbols ? RTLD_NOW : RTLD_LAZY));
-#endif
-
-		if(handle == nullptr)
-			throw LoaderException("Could not open `" + libName + "`");
-	}
-
-	~DynLib()
-	{
-		for(auto it(instances.cbegin()), end(instances.cend()); it != end; ++it)
-		{
-			(*it)->Destroy();
-		}
-
-		bool closeSuccess = true;
-		if(handle)
-		{
-			closeSuccess = 
-#if PLATFORM_WIN32_VC || PLATFORM_WIN32_MINGW
-				(::FreeLibrary(handle) != FALSE);
-#elif PLATFORM_POSIX
-				(::dlclose(lib.handle) == 0);
-#endif
-			if(!closeSuccess)
-				throw LoaderException("Unable to close library: Error `" + GetLastError() + "`");
-			
-			handle = nullptr;
-		}
-	}
-};
+/* @brief DynLib forward declaration */
+struct DynLib;
 
 /**
  * @class DynLoader DynLoader.hpp <DynLoader.hpp>
@@ -187,20 +147,20 @@ private:
 	 * @param libName - [in] library file name
 	 * @return true - loaded successfully, false otherwise
 	 */
-	DynLib* API_LOCAL OpenLib(const dyn_string& libName, bool resolveSymbols = true);
+	DynLib* OpenLib(const dyn_string& libName, bool resolveSymbols = true);
 
 	/**
 	 * @brief Close library
 	 * @param lib - [in] reference to dynamic library instance
 	 */
-	void API_LOCAL CloseLib(DynLib& lib);
+	void CloseLib(DynLib& lib);
 
 	/**
 	 * @brief Get symbol by name
 	 * @param symbolName - [in] symbol name
 	 * @return pointer to symbol, nullptr if not found
 	 */
-	DYN_SYMBOL API_LOCAL GetSymbolByName(DynLib& lib, const DYN_CHAR* symbolName);
+	DYN_SYMBOL GetSymbolByName(DynLib& lib, const DYN_CHAR* symbolName);
 
 	/**
 	 * @brief Get class instance
@@ -208,7 +168,7 @@ private:
 	 * @param className - [in] class name
 	 * @return pointer to DynClass instance
 	 */
-	DynClass* API_LOCAL GetClassInstance(DynLib& lib, const dyn_string& className);
+	DynClass* GetClassInstance(DynLib& lib, const dyn_string& className);
 
 public:
 	/**
@@ -252,6 +212,59 @@ public:
 
 }; // class DynLoader
 
+/* @brief DynLib structure */
+struct DynLib
+{
+        dyn_string name;
+	DYN_HANDLE handle;
+	std::vector<DynClass*> instances;
+	DynLoader& loader;
+
+	DynLib(const dyn_string& libName, DynLoader& loader, bool resolveSymbols) :
+			name(libName), handle(nullptr), instances(), loader(loader)
+	{
+	
+		handle =
+#if PLATFORM_WIN32_VC || PLATFORM_WIN32_MINGW
+				::LoadLibraryExA(libName.c_str(), NULL, resolveSymbols ? (DWORD)0 : DONT_RESOLVE_DLL_REFERENCES);
+#elif PLATFORM_POSIX
+				::dlopen(libName.c_str(), RTLD_GLOBAL | (resolveSymbols ? RTLD_NOW : RTLD_LAZY));
+#endif
+
+                if(handle == nullptr)
+			throw LoaderException("Could not open `" + libName + "`");
+	}
+
+	~DynLib()
+	{
+	
+		for(auto it(instances.cbegin()), end(instances.cend()); it != end; ++it)
+		{
+			(*it)->Destroy();
+		}
+
+		bool closeSuccess = true;
+		if(handle)
+		{
+			closeSuccess =
+#if PLATFORM_WIN32_VC || PLATFORM_WIN32_MINGW
+					(::FreeLibrary(handle) != FALSE);
+#elif PLATFORM_POSIX
+					(::dlclose(handle) == 0);
+#endif
+
+			if(!closeSuccess)
+				throw LoaderException("Unable to close library: Error `" + loader.GetLastError() + "`");
+
+			handle = nullptr;
+		}
+	}
+	
+	DynLib(const DynLib& lib);
+        const DynLib& operator=(const DynLib& lib);
+};
+
 } // namespace DynLoader
 
 #endif // __DYNLOADER_HPP__
+

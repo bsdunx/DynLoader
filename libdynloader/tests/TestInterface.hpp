@@ -31,11 +31,14 @@
 #include <platform.h>
 #include <DynClass.hpp>
 
+namespace DynLoader
+{
+
 /**
  * @class ITest
  * @brief Test interface
  */
-class API_LOCAL ITest : public DynLoader::DynClass
+class API_EXPORT ITest : public DynClass
 {
 
 public:
@@ -44,6 +47,8 @@ public:
 	 */
 	virtual void DoSomething() throw() = 0;
 };
+
+}
 
 #endif // __TESTINTERFACE_HPP__
 

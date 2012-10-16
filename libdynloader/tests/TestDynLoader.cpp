@@ -41,7 +41,7 @@ int main(int argc, char** argv)
 	if(argc < 2)
 	{
 		fprintf(stderr, "Usage %s <libName> <className1> [<className2>...]\n", argv[0]);
-		return -1;
+		return 1;
 	}
 
 	try
@@ -54,7 +54,7 @@ int main(int argc, char** argv)
 	
 		for(int i = 2; i < argc; ++i)
 		{
-			auto instance = dynLoader->GetClassInstance<ITest>(DynLoader::dyn_string(argv[1]), DynLoader::dyn_string(argv[i]));
+			auto instance = dynLoader->GetClassInstance<DynLoader::ITest>(DynLoader::dyn_string(argv[1]), DynLoader::dyn_string(argv[i]));
 			instance->DoSomething();
 			UNIT_TEST(true);
 		}
@@ -64,7 +64,7 @@ int main(int argc, char** argv)
 		
 		for(int i = 2; i < argc; ++i)
 		{
-			auto instance = dynLoader->GetClassInstance<ITest>(DynLoader::dyn_string(argv[1]), DynLoader::dyn_string(argv[i]));
+			auto instance = dynLoader->GetClassInstance<DynLoader::ITest>(DynLoader::dyn_string(argv[1]), DynLoader::dyn_string(argv[i]));
 			instance->DoSomething();
 			UNIT_TEST(true);
 		}

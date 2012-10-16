@@ -30,6 +30,9 @@
 #include "TestClass.hpp"
 #include <cstdio>
 
+namespace DynLoader
+{
+
 /**
  * @brief Test method
  */
@@ -44,5 +47,7 @@ void Test1::DoSomething() throw()
 void Test2::DoSomething() throw()
 {
 	fprintf(stderr, "Test2::DoSomething()\n");
+}
+
 }
 

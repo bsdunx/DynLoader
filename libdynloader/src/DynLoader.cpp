@@ -48,7 +48,7 @@
 namespace DynLoader
 {
 
-DynLoader::DynLoader() : lastError()
+DynLoader::DynLoader() : lastError(), libs()
 {
 }
 
@@ -72,7 +72,7 @@ DynLib* DynLoader::OpenLib(const dyn_string& libName, bool resolveSymbols)
 			return *it;
 	}
 
-	DynLib* lib = new DynLib(libName, resolveSymbols);
+	DynLib* lib = new DynLib(libName, *this, resolveSymbols);
 	libs.push_back(lib);
 
 	return lib;
@@ -198,3 +198,4 @@ void DynLoader::Destroy()
 }
 
 } // namespace DynLoader
+

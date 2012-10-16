@@ -43,8 +43,9 @@ namespace DynLoader
  */
 class API_LOCAL DynClass
 {
-
 public:
+	//DynClass(const dyn_string& className) : name(className) { }
+	
 	/**
 	 * @brief Destroy class instance
 	 */
@@ -84,3 +85,4 @@ extern "C" API_HELPER_EXPORT DynLoader::DynClass* Create##name() throw() \
 } // namespace DynLoader
 
 #endif // __DYNCLASS_HPP__
+
