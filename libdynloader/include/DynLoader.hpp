@@ -1,10 +1,10 @@
 /**
- * @mainpage libDynLoader
+ * @mainpage DynLoader
  *
  * @section Introduction
  *
- * libdynloader is a simple and lightweight C++ library forked from libpdl, 
- * which provides common cross-platform interface for creating and using 
+ * DynLoader is a simple and lightweight C++11 library forked from libpdl, 
+ * which provides a common cross-platform interface for creating and using 
  * dynamically loaded interface classes.
  *
  * Project home:@n
@@ -68,11 +68,11 @@
  * @author Igor Semenov <igor@progz.ru>
  * @author Adam Gregoire <bsdunx@gmail.com>
  *
- * @version 0.10.0
+ * @version 0.5.0
  *
  * @par License:
  * Copyright (c) 2007-2008, Igor Semenov @n
- * Copyright (c) 2010-2012, Adam Gregoire @n
+ * Copyright (c) 2010-2014, Adam Gregoire @n
  *
  * All rights reserved. @n
  * @n
@@ -109,7 +109,7 @@
 #include "LoaderException.hpp"
 
 #include <memory>
-#include <vector>
+#include <list>
 
 #if PLATFORM_WIN32_VC || PLATFORM_WIN32_MINGW
 #include <windows.h>
@@ -128,19 +128,14 @@ struct DynLib;
 
 /**
  * @class DynLoader DynLoader.hpp <DynLoader.hpp>
- * @brief Dynamic loader
- * @todo Replace class export with a factory function which has C linkage.
+ * @brief Dynamic module and interface loader
  */
 class API_EXPORT DynLoader
 {
 private:
-	// Forbid copy constructor and assignment operator
-	DynLoader(const DynLoader&);
-	DynLoader& operator=(const DynLoader&);
-
 	dyn_string lastError;
 
-	std::vector<DynLib*> libs;
+	std::list<DynLib*> libs;
 
 	/**
 	 * @brief Open library
@@ -171,6 +166,13 @@ private:
 	DynClass* GetClassInstance(DynLib& lib, const dyn_string& className);
 
 public:
+
+	DynLib* DynLoader::GetLoadedLibrary(const dyn_string& libName);
+
+	/* @brief Disable copy and default constructors */
+	DynLoader(const DynLoader&) = delete;
+	DynLoader& operator=(const DynLoader&) = delete;
+
 	/**
 	 * @brief Default constructor and destructor
 	 */
@@ -182,7 +184,7 @@ public:
 	 * @param libName - [in] library file name
 	 * @param className - [in] class name
 	 * @return class instance, 0 if failed
-	 * Class should be derived from DynClass
+	 * Class must be derived from DynClass
 	 */
 	template<typename Class>
 	Class* GetClassInstance(const dyn_string& libName, const dyn_string& className)
@@ -215,9 +217,9 @@ public:
 /* @brief DynLib structure */
 struct DynLib
 {
-        dyn_string name;
+	dyn_string name;
 	DYN_HANDLE handle;
-	std::vector<DynClass*> instances;
+	std::list<DynClass*> instances;
 	DynLoader& loader;
 
 	DynLib(const dyn_string& libName, DynLoader& loader, bool resolveSymbols) :
@@ -226,22 +228,20 @@ struct DynLib
 	
 		handle =
 #if PLATFORM_WIN32_VC || PLATFORM_WIN32_MINGW
-				::LoadLibraryExA(libName.c_str(), NULL, resolveSymbols ? (DWORD)0 : DONT_RESOLVE_DLL_REFERENCES);
+				::LoadLibraryExA(name.c_str(), NULL, resolveSymbols ? (DWORD)0 : DONT_RESOLVE_DLL_REFERENCES);
 #elif PLATFORM_POSIX
-				::dlopen(libName.c_str(), RTLD_GLOBAL | (resolveSymbols ? RTLD_NOW : RTLD_LAZY));
+				::dlopen(name.c_str(), RTLD_GLOBAL | (resolveSymbols ? RTLD_NOW : RTLD_LAZY));
 #endif
 
-                if(handle == nullptr)
+		if(handle == nullptr)
 			throw LoaderException("Could not open `" + libName + "`");
 	}
 
 	~DynLib()
 	{
 	
-		for(auto it(instances.cbegin()), end(instances.cend()); it != end; ++it)
-		{
-			(*it)->Destroy();
-		}
+		for(auto instance : instances)
+			instance->Destroy();
 
 		bool closeSuccess = true;
 		if(handle)
@@ -261,10 +261,9 @@ struct DynLib
 	}
 	
 	DynLib(const DynLib& lib);
-        const DynLib& operator=(const DynLib& lib);
+	const DynLib& operator=(const DynLib& lib);
 };
 
 } // namespace DynLoader
 
 #endif // __DYNLOADER_HPP__
-

@@ -1,6 +1,6 @@
 /**
  * Copyright (c) 2007-2008, Igor Semenov
- * Copyright (c) 2010-2012, Adam Gregoire
+ * Copyright (c) 2010-2014, Adam Gregoire
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -58,21 +58,39 @@ DynLoader::~DynLoader()
 }
 
 /**
+ * @brief Retrieves an instance of a loaded library
+ * @param libName - [in] library file name
+ * @return lib - dynamic library
+ */
+DynLib* DynLoader::GetLoadedLibrary(const dyn_string& libName)
+{
+	for (auto lib : libs)
+	{
+		if (lib->name == libName)
+			return lib;
+	}
+
+	return nullptr;
+}
+
+/**
  * @brief Open library
  * @param libName - [in] library file name
- * @return true - loaded successfully, false otherwise
+ * @return pointer to dynamic library, nullptr if not found or unable to 
+ * create
  *
  * @todo Add path alteration for windows.
  */
 DynLib* DynLoader::OpenLib(const dyn_string& libName, bool resolveSymbols)
 {
-	for(auto it(libs.cbegin()), end(libs.cend()); it != end; ++it)
-	{
-		if((*it)->name == libName)
-			return *it;
-	}
+	DynLib* lib = GetLoadedLibrary(libName);
+	if (lib != nullptr)
+		return lib;
 
-	DynLib* lib = new DynLib(libName, *this, resolveSymbols);
+	lib = new DynLib(libName, *this, resolveSymbols);
+	if (lib == nullptr)
+		return nullptr;
+
 	libs.push_back(lib);
 
 	return lib;
@@ -86,25 +104,25 @@ DynLib* DynLoader::OpenLib(const dyn_string& libName, bool resolveSymbols)
  */
 DynClass* DynLoader::GetClassInstance(DynLib& lib, const dyn_string& className)
 {
-	for(auto it(lib.instances.cbegin()), end(lib.instances.cend()); it != end; ++it)
+	for(auto instance : lib.instances)
 	{
-		if((*it)->GetName() == className)
-			return *it;
+		if(instance->GetName() == className)
+			return instance;
 	}
 
 	dyn_string builderName("Create" + className);
 
 	// POSIX guarantees that the size of a pointer to object is equal to 
-	// the size of a pointer to a function. On NT systems this is also a safe 
-	// assumtion.
+	// the size of a pointer to a function. On Windows NT systems this is also a safe 
+	// assumption.
 	std::function<DynClass*()> builder(std::bind(
-			reinterpret_cast<DynClass*(*)()>(
-			GetSymbolByName(lib, builderName.c_str()))));
+			reinterpret_cast<DynClass*(*)()>(GetSymbolByName(lib, builderName.c_str()))));
 	if(builder == nullptr)
-		throw LoaderException("Factory builder `" + builderName + "` for Class `" + className +
-		                      "` not found in " + lib.name);
+		throw LoaderException("Factory builder `" + builderName + 
+			"` for Class `" + className +
+			"` not found in " + lib.name);
 
-	DynClass* instance = builder();
+	auto instance = builder();
 	if(instance == nullptr)
 		throw LoaderException("Unable to create instance of class `" + className + "`");
 	
@@ -119,25 +137,26 @@ DynClass* DynLoader::GetClassInstance(DynLib& lib, const dyn_string& className)
  */
 const dyn_string& DynLoader::GetLastError()
 {
+
 	lastError.clear();
 
 #if PLATFORM_WIN32_VC || PLATFORM_WIN32_MINGW
 	LPSTR lpMsgBuf = nullptr;
-	const DWORD res =
-		::FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER|
-				FORMAT_MESSAGE_FROM_SYSTEM|FORMAT_MESSAGE_IGNORE_INSERTS,
-				nullptr, ::GetLastError(), 
-				MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-				lpMsgBuf, 0, nullptr);
+	const DWORD res = ::FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER|
+			FORMAT_MESSAGE_FROM_SYSTEM|FORMAT_MESSAGE_IGNORE_INSERTS,
+			nullptr, ::GetLastError(), 
+			MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+			lpMsgBuf, 0, nullptr);
+
 	if(res != 0)
 	{
 		lastError.assign(lpMsgBuf);
 		(void) ::LocalFree(lpMsgBuf);
 	}
 #elif PLATFORM_POSIX
-	const char* err = ::dlerror();
-	if(err != nullptr)
-		lastError.assign(err);
+	const char* dlerr = ::dlerror();
+	if(dlerr != nullptr)
+		lastError.assign(dlerr);
 #endif
 
 	return lastError;
@@ -146,18 +165,11 @@ const dyn_string& DynLoader::GetLastError()
 /**
  * @brief Close library
  * @param lib - [in] dynamic library instance
- * @return true if closed successfully, false otherwise
+ * @return void
  */
 void DynLoader::CloseLib(DynLib& lib)
 {
-	for(auto begin(libs.begin()), end(libs.end()); begin != end; ++begin)
-	{
-		if(*begin == &lib)
-		{
-			libs.erase(begin);
-			delete &lib;
-		}
-	}
+	libs.remove(&lib);
 }
 
 /**
@@ -167,10 +179,11 @@ void DynLoader::CloseLib(DynLib& lib)
  */
 DYN_SYMBOL DynLoader::GetSymbolByName(DynLib& lib, const DYN_CHAR * symbolName)
 {
+	return
 #if PLATFORM_WIN32_VC || PLATFORM_WIN32_MINGW
-	return reinterpret_cast<void *>(::GetProcAddress(lib.handle, symbolName));
+		reinterpret_cast<void *>(::GetProcAddress(lib.handle, symbolName));
 #elif PLATFORM_POSIX
-	return ::dlsym(lib.handle, symbolName);
+		::dlsym(lib.handle, symbolName);
 #endif
 }
 
@@ -181,9 +194,9 @@ DYN_SYMBOL DynLoader::GetSymbolByName(DynLib& lib, const DYN_CHAR * symbolName)
 void DynLoader::Reset()
 {
 	// Free all libraries
-	for(auto it(libs.begin()), end(libs.end()); it != end; ++it)
+	for(auto lib : libs)
 	{
-		delete *it;
+		delete lib;
 	}
 	libs.clear();
 }
