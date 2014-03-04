@@ -34,6 +34,7 @@
 
 #include <DynLoader.hpp>
 #include <LoaderException.hpp>
+
 #include "TestInterface.hpp"
 
 int main(int argc, char** argv)

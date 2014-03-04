@@ -214,12 +214,18 @@ public:
 
 }; // class DynLoader
 
+struct DynClassEntry
+{
+	dyn_string name;
+	DynClass* instance;
+};
+
 /* @brief DynLib structure */
 struct DynLib
 {
 	dyn_string name;
 	DYN_HANDLE handle;
-	std::list<DynClass*> instances;
+	std::list<DynClassEntry*> instances;
 	DynLoader& loader;
 
 	DynLib(const dyn_string& libName, DynLoader& loader, bool resolveSymbols) :
@@ -240,8 +246,12 @@ struct DynLib
 	~DynLib()
 	{
 	
-		for(auto instance : instances)
-			instance->Destroy();
+		for (auto entry : instances)
+		{
+			entry->instance->Destroy();
+			delete entry;
+		}
+		instances.clear();
 
 		bool closeSuccess = true;
 		if(handle)

@@ -104,10 +104,10 @@ DynLib* DynLoader::OpenLib(const dyn_string& libName, bool resolveSymbols)
  */
 DynClass* DynLoader::GetClassInstance(DynLib& lib, const dyn_string& className)
 {
-	for(auto instance : lib.instances)
+	for(auto entry : lib.instances)
 	{
-		if(instance->GetName() == className)
-			return instance;
+		if(entry->name == className)
+			return entry->instance;
 	}
 
 	dyn_string builderName("Create" + className);
@@ -119,14 +119,19 @@ DynClass* DynLoader::GetClassInstance(DynLib& lib, const dyn_string& className)
 			reinterpret_cast<DynClass*(*)()>(GetSymbolByName(lib, builderName.c_str()))));
 	if(builder == nullptr)
 		throw LoaderException("Factory builder `" + builderName + 
-			"` for Class `" + className +
-			"` not found in " + lib.name);
+				"` for Class `" + className +
+				"` not found in " + lib.name);
 
+	// Create an instance of the class
 	auto instance = builder();
 	if(instance == nullptr)
 		throw LoaderException("Unable to create instance of class `" + className + "`");
 	
-	lib.instances.push_back(instance);
+	auto entry = new DynClassEntry;
+	entry->name = className;
+	entry->instance = instance;
+
+	lib.instances.push_back(entry);
 
 	return instance;
 }
@@ -137,7 +142,6 @@ DynClass* DynLoader::GetClassInstance(DynLib& lib, const dyn_string& className)
  */
 const dyn_string& DynLoader::GetLastError()
 {
-
 	lastError.clear();
 
 #if PLATFORM_WIN32_VC || PLATFORM_WIN32_MINGW
@@ -170,6 +174,8 @@ const dyn_string& DynLoader::GetLastError()
 void DynLoader::CloseLib(DynLib& lib)
 {
 	libs.remove(&lib);
+
+	delete &lib;
 }
 
 /**
@@ -195,9 +201,8 @@ void DynLoader::Reset()
 {
 	// Free all libraries
 	for(auto lib : libs)
-	{
 		delete lib;
-	}
+
 	libs.clear();
 }
 
