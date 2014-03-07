@@ -38,7 +38,7 @@ namespace DynLoader
  * @class Test1
  * @brief Test class 1
  */
-class API_EXPORT Test1 : public ITest
+class API_LOCAL Test1 : public ITest
 {
 public:
 	/**
@@ -47,13 +47,13 @@ public:
 	void DoSomething() throw();
 };
 
-EXPORT_DYN_CLASS(Test1)
+EXPORT_DYNCLASS(Test1)
 
 /**
  * @class Test2
  * @brief Test class 2
  */
-class API_EXPORT Test2 : public ITest
+class API_LOCAL Test2 : public ITest
 {
 public:
 	/**
@@ -62,7 +62,7 @@ public:
 	void DoSomething() throw();
 };
 
-EXPORT_DYN_CLASS(Test2)
+EXPORT_DYNCLASS(Test2)
 
 }
 

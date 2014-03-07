@@ -41,9 +41,10 @@ namespace DynLoader
  * @class DynClass DynClass.hpp <DynClass.hpp>
  * @brief Common interface for all dynamically loaded classes
  */
-class API_EXPORT DynClass
+class API_LOCAL DynClass
 {
 public:
+	
 	/**
 	 * @brief Destroy class instance
 	 */
@@ -58,16 +59,16 @@ protected:
 }; // class DynClass
 
 /**
- * @def EXPORT_DYN_CLASS DynClass.hpp <DynClass.hpp>
+ * @def EXPORT_DYNCLASS DynClass.hpp <DynClass.hpp>
  * @brief Export constructor for dynamically loaded class
  * @param className - [in] name of the class
  */
-#define EXPORT_DYN_CLASS(name) \
-extern "C" API_EXPORT DynClass* Create##name() throw() \
+#define EXPORT_DYNCLASS(NAME) \
+extern "C" API_EXPORT DynClass* Create##NAME() throw() \
 { \
 	try \
 	{ \
-		return new name(); \
+		return new NAME(); \
 	} \
 	catch(...) \
 	{ \

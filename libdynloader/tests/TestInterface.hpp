@@ -38,7 +38,7 @@ namespace DynLoader
  * @class ITest
  * @brief Test interface
  */
-class API_EXPORT ITest : public DynClass
+class API_LOCAL ITest : public DynClass
 {
 
 public:

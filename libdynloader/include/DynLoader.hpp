@@ -214,6 +214,10 @@ public:
 
 }; // class DynLoader
 
+/**
+ * @brief DynClassEntry structure 
+ * We store the name here to keep it out of the client implementation
+ */
 struct DynClassEntry
 {
 	dyn_string name;
