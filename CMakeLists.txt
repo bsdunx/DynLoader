@@ -21,7 +21,7 @@ include(CheckCXXSourceCompiles)
 project(DynLoader)
 
 set(DynLoader_VERSION_MAJOR 0)
-set(DynLoader_VERSION_MINOR 2)
+set(DynLoader_VERSION_MINOR 5)
 set(DynLoader_VERSION_PATCH 0)
 
 set(DynLoader_VERSION
@@ -37,8 +37,12 @@ if(WIN32 AND MSVC)
     set(CMAKE_BUILD_ON_VISUAL_STUDIO 1)
 endif()
 
-if(CMAKE_COMPILER_IS_GNUCXX MATCHES "1")
-  set(CMAKE_CXX_FLAGS "-std=gnu++0x -Wall -pedantic -Weffc++ -fno-rtti -fvisibility=hidden -fvisibility-inlines-hidden")
+if (CMAKE_CXX_COMPILER MATCHES ".*clang")
+    set(CMAKE_COMPILER_IS_CLANGXX 1)
+endif ()
+
+if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_CLANGXX)
+  set(CMAKE_CXX_FLAGS "-std=c++11 -Wall -pedantic -Weffc++ -fno-rtti -fvisibility=hidden -fvisibility-inlines-hidden")
   set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} -g -ggdb -D_DEBUG -O")
   set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -O2")
   set(CMAKE_CXX_FLAGS_MINSIZEREL "${CMAKE_CXX_FLAGS} -Os")

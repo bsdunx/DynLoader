@@ -167,7 +167,7 @@ private:
 
 public:
 
-	DynLib* DynLoader::GetLoadedLibrary(const dyn_string& libName);
+	DynLib* GetLoadedLibrary(const dyn_string& libName);
 
 	/* @brief Disable copy and default constructors */
 	DynLoader(const DynLoader&) = delete;
@@ -281,3 +281,4 @@ struct DynLib
 } // namespace DynLoader
 
 #endif // __DYNLOADER_HPP__
+
