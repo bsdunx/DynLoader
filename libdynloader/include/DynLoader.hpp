@@ -222,6 +222,11 @@ struct DynClassEntry
 {
 	dyn_string name;
 	DynClass* instance;
+
+	DynClassEntry(const dyn_string& name, DynClass* instance) :
+			name(name), instance(instance)
+	{
+	}
 };
 
 /* @brief DynLib structure */
@@ -238,7 +243,7 @@ struct DynLib
 	
 		handle =
 #if PLATFORM_WIN32_VC || PLATFORM_WIN32_MINGW
-				::LoadLibraryExA(name.c_str(), NULL, resolveSymbols ? (DWORD)0 : DONT_RESOLVE_DLL_REFERENCES);
+				::LoadLibraryExA(name.c_str(), nullptr, resolveSymbols ? (DWORD)0 : DONT_RESOLVE_DLL_REFERENCES);
 #elif PLATFORM_POSIX
 				::dlopen(name.c_str(), RTLD_GLOBAL | (resolveSymbols ? RTLD_NOW : RTLD_LAZY));
 #endif

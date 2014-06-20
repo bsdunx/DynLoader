@@ -127,9 +127,7 @@ DynClass* DynLoader::GetClassInstance(DynLib& lib, const dyn_string& className)
 	if(instance == nullptr)
 		throw LoaderException("Unable to create instance of class `" + className + "`");
 	
-	auto entry = new DynClassEntry;
-	entry->name = className;
-	entry->instance = instance;
+	auto entry = new DynClassEntry(className, instance);
 
 	lib.instances.push_back(entry);
 
